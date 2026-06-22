@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ryos Lernarchiv v0.1</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="data.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="site-header" id="siteHeader">
+      <div>
+        <p class="eyebrow">Lokaler Prototyp v0.1</p>
+        <h1>Ryos Lernarchiv</h1>
+        <p class="subtitle">Ein funktionales Forschungsarchiv für Prüfungsstoff.</p>
+      </div>
+      <div class="header-stats" id="headerStats" aria-label="Fortschritt"></div>
+    </header>
+
+    <main class="dashboard" id="app" aria-live="polite">
+      <section class="card quickstart-card" id="quickstartCard"></section>
+
+      <section class="card startmode-card">
+        <div class="section-title-row">
+          <div>
+            <p class="eyebrow">Startmodus</p>
+            <h2>Wie willst du anfangen?</h2>
+          </div>
+        </div>
+        <div class="mode-bar" id="modeBar"></div>
+      </section>
+
+      <section class="card map-card">
+        <div class="section-title-row">
+          <div>
+            <p class="eyebrow">Prüfungslandkarte</p>
+            <h2>Gebiete & Knoten</h2>
+          </div>
+          <button class="ghost-button" type="button" data-action="show-all-nodes">Alle anzeigen</button>
+        </div>
+        <div class="map-filter" id="mapFilter"></div>
+        <div class="map-grid" id="examMap"></div>
+      </section>
+
+      <aside class="side-column">
+        <section class="card danger-card">
+          <div class="section-title-row">
+            <div>
+              <p class="eyebrow">Gefahrenzonen</p>
+              <h2>Was kippt zuerst?</h2>
+            </div>
+          </div>
+          <div id="dangerZones"></div>
+        </section>
+
+        <section class="card questlog-card">
+          <div class="section-title-row">
+            <div>
+              <p class="eyebrow">Questlog</p>
+              <h2>Konkrete Lernhandlungen</h2>
+            </div>
+          </div>
+          <div id="questLog"></div>
+        </section>
+      </aside>
+
+      <section class="card active-quest-card" id="activeQuestPanel"></section>
+
+      <section class="card research-card">
+        <div class="section-title-row">
+          <div>
+            <p class="eyebrow">Forschungsbuch</p>
+            <h2>Notizen, Leitfragen & Belege</h2>
+          </div>
+        </div>
+        <div id="researchBook"></div>
+      </section>
+    </main>
+  </div>
+
+  <template id="emptyStateTemplate">
+    <div class="empty-state">
+      <strong>Noch nichts gespeichert.</strong>
+      <span>Füge einen Lernbeweis hinzu, um echten Fortschritt sichtbar zu machen.</span>
+    </div>
+  </template>
+</body>
+</html>
