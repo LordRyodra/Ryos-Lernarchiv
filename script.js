@@ -5,6 +5,7 @@
 
   const modes = [
     { id: "plants", label: "Pflanzen", target: "plants", question: "family", text: "100 Pflanzen: Familie, Gattung, Art." },
+    { id: "familyDrill", label: "Familien-Diagnose", target: "plants", question: "familyTraits", text: "Merkmale → passende Pflanzenfamilie." },
     { id: "animals", label: "Tiere", target: "animals", question: "family", text: "Tiere: Taxonomie, Familien, Ordnungen." },
     { id: "species", label: "Artnamen", target: "all", question: "species", text: "Deutsch ↔ wissenschaftlich." },
     { id: "traits", label: "Merkmale", target: "all", question: "traits", text: "Merkmale wirklich begründen." }
@@ -16,7 +17,8 @@
     selectedCluster: null,
     quiz: null,
     mastery: {},
-    proofs: []
+    proofs: [],
+    familyMastery: {}
   };
 
   let state = loadState();
@@ -70,6 +72,23 @@
     const m = mastery(item);
     const values = [m.family || 0, m.species || 0, m.traits || 0, m.recognition || 0];
     return Math.round(values.reduce((a, b) => a + b, 0) / (values.length * 3) * 100);
+  }
+
+  function plantFamilies() {
+    return [...new Set(DATA.plants.map((item) => item.family).filter(Boolean))].sort();
+  }
+
+  function familyItems(family) {
+    return DATA.plants.filter((item) => item.family === family);
+  }
+
+  function familyMastery(family) {
+    return state.familyMastery?.[family] || { level: 0, attempts: 0, correct: 0 };
+  }
+
+  function familyPercent(family) {
+    const fm = familyMastery(family);
+    return Math.round(((fm.level || 0) / 5) * 100);
   }
 
   function itemName(item) {
@@ -131,6 +150,7 @@
         <div class="controls">
           <button class="primary-button" type="button" data-action="new-quiz">Neue Frage</button>
           <button class="ghost-button" type="button" data-action="focus-weak">Schwächstes Thema</button>
+          <button class="ghost-button" type="button" data-action="start-family-drill">Familien-Diagnose</button>
         </div>
       </div>
     `;
@@ -204,6 +224,7 @@
     const quests = [
       { title: `Pflanzen: ${plantPerDay} neue/stabile Einträge`, text: `${plantOpen} Pflanzen unter 80%. Familien zuerst.` , mode: "plants"},
       { title: `Tiere: ${animalPerDay} neue/stabile Einträge`, text: `${animalOpen} Tiere unter 80%. Ordnung/Familie zuerst.` , mode: "animals"},
+      { title: "Familien-Diagnose", text: "Merkmale sehen → Familie nennen. Perfekt gegen reines Arten-Auswendiglernen.", mode: "familyDrill"},
       { title: "Merkmalsbeweis", text: "Nimm 1 unsicheren Eintrag und schreibe 3 echte Merkmale auf.", mode: "traits"}
     ];
     $("#questLog").innerHTML = quests.map((q) => `
@@ -217,6 +238,10 @@
 
   function makeQuiz(forcedItem = null) {
     const mode = currentMode();
+    if (mode.question === "familyTraits") {
+      makeFamilyQuiz();
+      return;
+    }
     const pool = relevantItems().filter((item) => item.family || item.germanName || item.scientificName || item.displayName);
     const item = forcedItem || weightedPick(pool.length ? pool : items());
     const questionType = mode.question;
@@ -250,6 +275,41 @@
     render();
   }
 
+  function makeFamilyQuiz() {
+    const families = plantFamilies().filter((family) => DATA.familyHints?.[family]?.length);
+    const sorted = [...families].sort((a, b) => familyPercent(a) - familyPercent(b));
+    const focusPool = sorted.slice(0, Math.max(8, Math.ceil(sorted.length * 0.45)));
+    const family = focusPool[Math.floor(Math.random() * focusPool.length)] || sorted[0];
+    const hints = [...(DATA.familyHints[family] || [])].slice(0, 4);
+    const examples = familyItems(family).slice(0, 4).map(itemName);
+    const options = [family, ...families.filter((f) => f !== family).sort(() => Math.random() - 0.5).slice(0, 3)].sort(() => Math.random() - 0.5);
+    state.quiz = {
+      isFamilyDrill: true,
+      family,
+      itemId: null,
+      prompt: `Welche Pflanzenfamilie passt zu diesen Merkmalen? ${hints.slice(0, 3).join(" · ")}`,
+      answer: family,
+      options,
+      field: "familyProfile",
+      checked: false,
+      selected: null,
+      traits: hints,
+      examples
+    };
+    saveState();
+    render();
+  }
+
+  function makeFamilyQuizFor(family) {
+    const hints = [...(DATA.familyHints[family] || [])].slice(0, 4);
+    const families = plantFamilies().filter((f) => DATA.familyHints?.[f]?.length);
+    const examples = familyItems(family).slice(0, 4).map(itemName);
+    const options = [family, ...families.filter((f) => f !== family).sort(() => Math.random() - 0.5).slice(0, 3)].sort(() => Math.random() - 0.5);
+    state.quiz = { isFamilyDrill: true, family, itemId: null, prompt: `Welche Pflanzenfamilie passt zu diesen Merkmalen? ${hints.slice(0, 3).join(" · ")}`, answer: family, options, field: "familyProfile", checked: false, selected: null, traits: hints, examples };
+    saveState();
+    render();
+  }
+
   function weightedPick(pool) {
     const sorted = [...pool].sort((a, b) => masteryPercent(a) - masteryPercent(b));
     const top = sorted.slice(0, Math.max(8, Math.ceil(sorted.length * 0.35)));
@@ -275,6 +335,26 @@
     const correct = selected === state.quiz.answer;
     state.quiz.selected = selected;
     state.quiz.checked = true;
+
+    if (state.quiz.isFamilyDrill) {
+      state.familyMastery = state.familyMastery || {};
+      const family = state.quiz.family;
+      const fm = familyMastery(family);
+      fm.attempts = (fm.attempts || 0) + 1;
+      if (correct) {
+        fm.correct = (fm.correct || 0) + 1;
+        fm.level = Math.min(5, (fm.level || 0) + 1);
+        familyItems(family).forEach((plant) => {
+          const m = mastery(plant);
+          m.family = Math.min(3, (m.family || 0) + 1);
+          state.mastery[plant.id] = m;
+        });
+      } else {
+        fm.level = Math.max(0, (fm.level || 0) - 1);
+      }
+      state.familyMastery[family] = fm;
+    }
+
     const item = items().find((x) => x.id === state.quiz.itemId);
     if (item) {
       const m = mastery(item);
@@ -297,6 +377,10 @@
 
   function renderActiveQuest() {
     const quiz = state.quiz;
+    if (quiz?.isFamilyDrill) {
+      renderFamilyDrillQuest();
+      return;
+    }
     const item = quiz ? items().find((x) => x.id === quiz.itemId) : getWeakItems(1)[0];
     const hints = item ? DATA.familyHints[item.family] || item.traits || [] : [];
     $("#activeQuestPanel").innerHTML = `
@@ -331,6 +415,68 @@
     `;
   }
 
+  function renderFamilyDrillQuest() {
+    const quiz = state.quiz;
+    const contrasts = (DATA.familyContrasts?.[quiz.family] || []).filter((family) => DATA.familyHints?.[family]);
+    $("#activeQuestPanel").innerHTML = `
+      <div class="section-title-row">
+        <div>
+          <p class="eyebrow">Aktive Quest · Familien-Diagnose</p>
+          <h2>Merkmale → Familie</h2>
+        </div>
+        <button class="primary-button" type="button" data-action="new-quiz">Neue Familienfrage</button>
+      </div>
+      <div class="active-layout">
+        <div class="quiz-box">
+          <p class="eyebrow">Diagnosefrage</p>
+          <div class="quiz-question">${escapeHTML(quiz.prompt)}</div>
+          <div class="answer-grid">${quiz.options.map((opt) => {
+            let cls = "";
+            if (quiz.checked && opt === quiz.answer) cls = "correct";
+            if (quiz.checked && opt === quiz.selected && opt !== quiz.answer) cls = "wrong";
+            return `<button class="answer-button ${cls}" type="button" data-action="answer" data-value="${escapeAttr(opt)}">${escapeHTML(opt)}</button>`;
+          }).join("")}</div>
+          ${quiz.checked ? `<p style="margin-top:12px" class="${quiz.selected === quiz.answer ? "status-ok" : "status-danger"}">${quiz.selected === quiz.answer ? "Richtig. Familienverständnis gespeichert." : `Nicht richtig. Erwartet: ${escapeHTML(quiz.answer)}`}</p>` : ""}
+        </div>
+        <div>
+          <h3>${escapeHTML(quiz.family)}</h3>
+          <div class="meta-line"><span>${familyItems(quiz.family).length} Pflanzen in deiner Liste</span><span>${familyPercent(quiz.family)}% Familiensicherheit</span></div>
+          <h3 style="margin-top:14px">Diagnosemerkmale</h3>
+          ${quiz.traits.map((h) => `<label class="checkline"><input type="checkbox"> ${escapeHTML(h)}</label>`).join("")}
+          <h3 style="margin-top:14px">Beispiele aus deiner Liste</h3>
+          <p class="muted">${quiz.examples.map(escapeHTML).join(" · ") || "Keine Beispiele gefunden."}</p>
+          ${contrasts.length ? `<h3 style="margin-top:14px">Nicht verwechseln mit</h3><div class="contrast-list">${contrasts.map((family) => `<details class="contrast-card"><summary>${escapeHTML(family)}</summary><p>${(DATA.familyHints[family] || []).map(escapeHTML).join(" · ")}</p></details>`).join("")}</div>` : ""}
+          <textarea id="proofInput" placeholder="Familienbeweis: Warum ist das diese Familie? Welches Merkmal wäre am sichersten? Womit würdest du sie verwechseln?"></textarea>
+          <div class="controls"><button class="primary-button" type="button" data-action="save-family-proof">Familienbeweis speichern</button></div>
+        </div>
+      </div>
+    `;
+  }
+
+  function saveFamilyProof() {
+    const quiz = state.quiz;
+    const input = $("#proofInput");
+    const text = input?.value.trim() || "";
+    if (!quiz?.isFamilyDrill) return;
+    if (text.length < 30) {
+      alert("Der Familienbeweis ist noch zu kurz. Schreib mindestens 30 Zeichen.");
+      input?.focus();
+      return;
+    }
+    state.proofs.unshift({ id: crypto.randomUUID ? crypto.randomUUID() : `proof-${Date.now()}`, itemId: `family-${quiz.family}`, itemName: `Familie ${quiz.family}`, text, createdAt: new Date().toISOString() });
+    state.familyMastery = state.familyMastery || {};
+    const fm = familyMastery(quiz.family);
+    fm.level = Math.min(5, (fm.level || 0) + 1);
+    state.familyMastery[quiz.family] = fm;
+    familyItems(quiz.family).forEach((plant) => {
+      const m = mastery(plant);
+      m.traits = Math.min(3, (m.traits || 0) + 1);
+      state.mastery[plant.id] = m;
+    });
+    saveState();
+    render();
+  }
+
   function saveProof() {
     const quiz = state.quiz;
     const item = quiz ? items().find((x) => x.id === quiz.itemId) : getWeakItems(1)[0];
@@ -356,7 +502,11 @@
     $("#researchBook").innerHTML = `
       <div class="active-layout">
         <div>
-          <h3>Einträge im aktuellen Filter</h3>
+          <h3>Pflanzenfamilien-Diagnose</h3>
+          <div class="family-drill-list">
+            ${plantFamilies().map((family) => `<button class="family-chip" type="button" data-action="train-family" data-id="${escapeAttr(family)}"><strong>${escapeHTML(family)}</strong><span>${familyItems(family).length} Arten · ${familyPercent(family)}%</span></button>`).join("")}
+          </div>
+          <h3 style="margin-top:16px">Einträge im aktuellen Filter</h3>
           <div class="item-list">
             ${current.map((item) => `<article class="item-card">
               <h3>${escapeHTML(itemName(item))}</h3>
@@ -398,12 +548,15 @@
     if (action === "reset-filter") { state.filterGroup = "all"; saveState(); render(); }
     if (action === "new-quiz") makeQuiz();
     if (action === "focus-weak") { const weak = getWeakItems(1)[0]; if (weak) makeQuiz(weak); }
+    if (action === "start-family-drill") { state.mode = "familyDrill"; state.filterGroup = "all"; state.quiz = null; saveState(); makeQuiz(); }
+    if (action === "train-family") { state.mode = "familyDrill"; state.filterGroup = "plants:" + id; state.quiz = null; makeFamilyQuizFor(id); }
     if (action === "train-item") { const item = items().find((x) => x.id === id); if (item) makeQuiz(item); }
     if (action === "answer") answerQuiz(button.dataset.value);
     if (action === "save-proof") saveProof();
+    if (action === "save-family-proof") saveFamilyProof();
     if (action === "reset-progress") {
       if (confirm("Lokalen Fortschritt wirklich löschen? Das betrifft nur diesen Browser.")) {
-        state = { ...defaultState, mastery: {}, proofs: [], quiz: null };
+        state = { ...defaultState, mastery: {}, familyMastery: {}, proofs: [], quiz: null };
         saveState(); render();
       }
     }

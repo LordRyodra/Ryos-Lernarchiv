@@ -121,3 +121,12 @@ select, input { border-radius: 12px; border: 1px solid var(--line); background: 
   .quickstart-card, .startmode-card, .map-card, .active-quest-card, .research-card, .side-column { grid-column: 1; grid-row: auto; }
   .header-stats { justify-content: flex-start; }
 }
+
+
+.family-drill-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; max-height: 190px; overflow: auto; padding-right: 6px; }
+.family-chip { border: 1px solid var(--line); border-radius: 999px; background: rgba(112,240,180,.06); color: var(--text); padding: 8px 10px; display: inline-flex; gap: 8px; align-items: center; }
+.family-chip span { color: var(--muted); font-size: .76rem; }
+.contrast-list { display: grid; gap: 8px; margin: 8px 0 12px; }
+.contrast-card { border: 1px solid var(--line); border-radius: 14px; padding: 9px 10px; background: rgba(0,0,0,.16); color: var(--muted); }
+.contrast-card summary { color: var(--text); cursor: pointer; font-weight: 800; }
+.contrast-card p { margin: 8px 0 0; }

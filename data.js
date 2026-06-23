@@ -1,7 +1,7 @@
 window.LEARNING_ARCHIVE_DATA = {
   "app": {
     "title": "Ryos Lernarchiv",
-    "version": "0.2",
+    "version": "0.2.1",
     "focus": "Formenkenntnis Tiere & Pflanzen",
     "motto": "Erkennen, einordnen, beweisen – nicht nur abhaken."
   },
@@ -53,62 +53,236 @@ window.LEARNING_ARCHIVE_DATA = {
     "Poaceae": [
       "grasartiger Habitus",
       "Blütenstand mit Ährchen",
-      "parallelnervige Blätter"
+      "parallelnervige Blätter",
+      "Stängel meist rund mit Knoten"
     ],
     "Asteraceae": [
       "Köpfchenblütenstand",
       "viele Einzelblüten wirken wie eine Blüte",
-      "Hüllblätter am Köpfchen"
+      "Hüllblätter am Köpfchen",
+      "oft Röhren- und/oder Zungenblüten"
     ],
     "Fabaceae": [
       "Schmetterlingsblüte",
       "Hülsenfrucht",
-      "oft gefiederte oder dreizählige Blätter"
+      "oft gefiederte oder dreizählige Blätter",
+      "häufig Nebenblätter"
     ],
     "Lamiaceae": [
       "vierkantiger Stängel",
       "gegenständige Blätter",
-      "Lippenblüten"
+      "Lippenblüten",
+      "häufig aromatisch"
     ],
     "Apiaceae": [
       "Dolden oder Doppeldolden",
       "oft geteilte Blätter",
+      "Stängel häufig hohl oder gerieft",
       "häufig aromatisch"
     ],
     "Rosaceae": [
       "fünfzählige Blüten",
       "viele Staubblätter",
-      "oft Nebenblätter"
+      "oft Nebenblätter",
+      "Früchte sehr verschieden: Nuss, Steinfrucht, Sammelfrucht"
     ],
     "Pinaceae": [
       "Nadelgehölze",
       "Zapfen",
-      "harzführende Gehölze"
+      "harzführende Gehölze",
+      "Blätter als Nadeln"
     ],
     "Betulaceae": [
       "Kätzchenblütenstände",
       "holzige Gehölze",
-      "oft gesägte Blätter"
+      "oft gesägte Blätter",
+      "Früchte oft Nüsschen oder geflügelte Nüsschen"
     ],
     "Brassicaceae": [
       "vierzählige Kreuzblüten",
       "Schoten oder Schötchen",
-      "meist 6 Staubblätter"
+      "meist 6 Staubblätter",
+      "Blätter oft wechselständig oder rosettig"
     ],
     "Caryophyllaceae": [
       "gegenständige Blätter",
       "Knoten am Stängel",
-      "meist fünfzählige Blüten"
+      "meist fünfzählige Blüten",
+      "oft freie Kronblätter und Kapseln"
     ],
     "Fagaceae": [
       "Bäume",
       "Nussfrüchte",
-      "Früchte oft in Bechern oder Hüllen"
+      "Früchte oft in Bechern oder Hüllen",
+      "Blätter meist einfach und wechselständig"
     ],
     "Cyperaceae": [
       "dreikantige Stängel",
       "grasähnlich",
+      "Blätter meist dreizeilig",
       "Blüten in Ährchen"
+    ],
+    "Adoxaceae": [
+      "gegenständige Blätter",
+      "Sträucher oder Kräuter",
+      "Blütenstände oft schirmrispig oder doldenartig",
+      "häufig Steinfrüchte oder Beeren"
+    ],
+    "Aristolochiaceae": [
+      "krautige Pflanzen mit auffälligen Einzelblüten",
+      "Blätter oft herz- bis nierenförmig",
+      "Blüten radiär oder ungewöhnlich geformt",
+      "oft bodennah"
+    ],
+    "Aspleniaceae": [
+      "Farnpflanzen",
+      "Sori auf Blattunterseite meist länglich",
+      "Wedel oft fein gegliedert",
+      "keine Blüten oder Samen"
+    ],
+    "Athyriaceae": [
+      "Farnpflanzen",
+      "fein gefiederte Wedel",
+      "Sori auf Blattunterseite",
+      "keine Blüten oder Samen"
+    ],
+    "Boraginaceae": [
+      "raue Behaarung",
+      "Blüten oft trichter- oder glockenförmig",
+      "Blütenstand häufig eingerollt",
+      "Blätter meist wechselständig und ganzrandig"
+    ],
+    "Caprifoliaceae": [
+      "gegenständige Blätter",
+      "häufig Sträucher oder Stauden",
+      "Blüten oft röhrig oder zweilippig",
+      "Beeren oder Steinfrüchte möglich"
+    ],
+    "Celastraceae": [
+      "verholzende Sträucher",
+      "gegenständige oder wechselständige Blätter",
+      "kleine unauffällige Blüten",
+      "auffällige Früchte möglich"
+    ],
+    "Cornaceae": [
+      "gegenständige Blätter",
+      "bogenförmige Blattadern",
+      "verholzende Sträucher oder Bäume",
+      "kleine Blüten in dichten Blütenständen"
+    ],
+    "Dennstaedtiaceae": [
+      "Farnpflanzen",
+      "große mehrfach gefiederte Wedel",
+      "kriechende Rhizome",
+      "keine Blüten oder Samen"
+    ],
+    "Dryopteridaceae": [
+      "Farnpflanzen",
+      "Wedel meist gefiedert",
+      "Sori auf Blattunterseite oft rundlich",
+      "keine Blüten oder Samen"
+    ],
+    "Equisetaceae": [
+      "gegliederte hohle Sprosse",
+      "Quirle aus Seitenästen",
+      "Sporenähren statt Blüten",
+      "raue kieselsäurehaltige Oberfläche"
+    ],
+    "Ericaceae": [
+      "oft immergrüne oder kleinblättrige Sträucher",
+      "saure Standorte häufig",
+      "Blüten oft krug- oder glockenförmig",
+      "Beeren oder Kapseln"
+    ],
+    "Euphorbiaceae": [
+      "Milchsaft häufig",
+      "Blüten oft stark reduziert",
+      "Frucht meist dreiteilig",
+      "Laubblätter wechselständig oder scheinbar quirlig"
+    ],
+    "Geraniaceae": [
+      "fünfzählige Blüten",
+      "geschnäbelte Frucht",
+      "Blätter oft gelappt oder geteilt",
+      "krautige Pflanzen"
+    ],
+    "Juncaceae": [
+      "binsenartige Pflanzen",
+      "Blüten klein und unscheinbar",
+      "Blätter oft rundlich oder grasartig",
+      "Frucht meist Kapsel"
+    ],
+    "Malvaceae": [
+      "Nebenblätter häufig",
+      "Blätter oft herzförmig oder gelappt",
+      "Blüten oft fünfzählig",
+      "Staubblätter oft zu Röhre verwachsen"
+    ],
+    "Oleaceae": [
+      "gegenständige Blätter",
+      "verholzende Pflanzen",
+      "Blüten oft vierzählig",
+      "Früchte als Flügelnüsse, Beeren oder Steinfrüchte"
+    ],
+    "Oxalidaceae": [
+      "Blätter oft kleeartig dreizählig",
+      "saurer Geschmack durch Oxalsäure",
+      "fünfzählige Blüten",
+      "krautige Pflanzen"
+    ],
+    "Papaveraceae": [
+      "Milchsaft häufig gefärbt",
+      "Blüten mit vielen Staubblättern",
+      "Kapsel oder schotenartige Frucht",
+      "Blätter oft geteilt"
+    ],
+    "Plantaginaceae": [
+      "Blüten oft zygomorph oder in Ähren",
+      "Blätter häufig rosettig oder gegenständig",
+      "Kapsel häufig",
+      "Familie enthält Wegerich und Ehrenpreis"
+    ],
+    "Polygonaceae": [
+      "Ochrea / Nebenblattscheide häufig",
+      "kleine Blüten",
+      "Frucht meist Nüsschen",
+      "Blätter oft wechselständig"
+    ],
+    "Ranunculaceae": [
+      "viele freie Staubblätter",
+      "Blütenhülle oft nicht klar in Kelch/Krone getrennt",
+      "Früchte oft viele Nüsschen oder Balgfrüchte",
+      "Blätter oft geteilt"
+    ],
+    "Rubiaceae": [
+      "Blätter scheinbar quirlig",
+      "Nebenblätter zwischen Blattstielen",
+      "vierzählige kleine Blüten",
+      "Stängel oft kantig"
+    ],
+    "Salicaceae": [
+      "Gehölze",
+      "Kätzchen häufig",
+      "Blätter meist einfach und wechselständig",
+      "Samen oft mit Haaren"
+    ],
+    "Sapindaceae": [
+      "gegenständige Blätter",
+      "oft gelappte oder gefingerte Blätter",
+      "Früchte häufig Spaltfrüchte oder geflügelt",
+      "Ahorn-Arten mit paarigen Flügelnüssen"
+    ],
+    "Ulmaceae": [
+      "Blätter oft asymmetrisch am Grund",
+      "Blattrand gesägt",
+      "Früchte oft geflügelte Nüsschen",
+      "verholzende Bäume"
+    ],
+    "Urticaceae": [
+      "Brennhaare möglich",
+      "unscheinbare Blüten",
+      "Blätter oft gegenständig oder wechselständig und gesägt",
+      "krautige Pflanzen"
     ]
   },
   "plants": [
@@ -6831,5 +7005,71 @@ window.LEARNING_ARCHIVE_DATA = {
       "displayName": "Drosselrohrsänger",
       "imageStatus": "missing"
     }
-  ]
+  ],
+  "familyContrasts": {
+    "Poaceae": [
+      "Cyperaceae",
+      "Juncaceae"
+    ],
+    "Cyperaceae": [
+      "Poaceae",
+      "Juncaceae"
+    ],
+    "Juncaceae": [
+      "Poaceae",
+      "Cyperaceae"
+    ],
+    "Apiaceae": [
+      "Asteraceae",
+      "Brassicaceae"
+    ],
+    "Asteraceae": [
+      "Apiaceae",
+      "Caryophyllaceae"
+    ],
+    "Fabaceae": [
+      "Rosaceae",
+      "Lamiaceae"
+    ],
+    "Lamiaceae": [
+      "Boraginaceae",
+      "Plantaginaceae"
+    ],
+    "Rosaceae": [
+      "Fabaceae",
+      "Ranunculaceae"
+    ],
+    "Brassicaceae": [
+      "Caryophyllaceae",
+      "Papaveraceae"
+    ],
+    "Caryophyllaceae": [
+      "Brassicaceae",
+      "Geraniaceae"
+    ],
+    "Fagaceae": [
+      "Betulaceae",
+      "Salicaceae"
+    ],
+    "Betulaceae": [
+      "Fagaceae",
+      "Salicaceae"
+    ],
+    "Pinaceae": [
+      "Fagaceae",
+      "Betulaceae"
+    ],
+    "Sapindaceae": [
+      "Rosaceae",
+      "Betulaceae"
+    ],
+    "Plantaginaceae": [
+      "Lamiaceae",
+      "Rubiaceae"
+    ],
+    "Ranunculaceae": [
+      "Rosaceae",
+      "Papaveraceae"
+    ]
+  }
 };
