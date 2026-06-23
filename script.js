@@ -1,17 +1,21 @@
 (() => {
   const DATA = window.LEARNING_ARCHIVE_DATA;
-  const STORAGE_KEY = "ryosLernarchiv.v0.1";
-
+  const STORAGE_KEY = "ryosLernarchiv.v0.2.formenkenntnis";
   const $ = (selector) => document.querySelector(selector);
-  const emptyTemplate = () => $("#emptyStateTemplate").content.firstElementChild.cloneNode(true).outerHTML;
+
+  const modes = [
+    { id: "plants", label: "Pflanzen", target: "plants", question: "family", text: "100 Pflanzen: Familie, Gattung, Art." },
+    { id: "animals", label: "Tiere", target: "animals", question: "family", text: "Tiere: Taxonomie, Familien, Ordnungen." },
+    { id: "species", label: "Artnamen", target: "all", question: "species", text: "Deutsch ↔ wissenschaftlich." },
+    { id: "traits", label: "Merkmale", target: "all", question: "traits", text: "Merkmale wirklich begründen." }
+  ];
 
   const defaultState = {
-    activeModeId: "rescue",
-    selectedArea: "all",
-    selectedNodeId: DATA.mapNodes[0]?.id ?? null,
-    activeQuestId: DATA.quests[0]?.id ?? null,
-    questStatus: {},
-    questSteps: {},
+    mode: "plants",
+    filterGroup: "all",
+    selectedCluster: null,
+    quiz: null,
+    mastery: {},
     proofs: []
   };
 
@@ -19,10 +23,8 @@
 
   function loadState() {
     try {
-      const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
-      return { ...defaultState, ...(parsed || {}) };
-    } catch (error) {
-      console.warn("Lernarchiv: localStorage konnte nicht gelesen werden.", error);
+      return { ...defaultState, ...(JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}) };
+    } catch {
       return { ...defaultState };
     }
   }
@@ -31,534 +33,387 @@
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }
 
-  function resetState() {
-    const confirmed = confirm("Lokalen Fortschritt wirklich löschen? Das betrifft nur diesen Browser.");
-    if (!confirmed) return;
-    state = { ...defaultState, proofs: [], questStatus: {}, questSteps: {} };
-    saveState();
-    render();
+  function items() {
+    return [...DATA.plants, ...DATA.animals];
   }
 
-  function getNode(nodeId) {
-    return DATA.mapNodes.find((node) => node.id === nodeId);
+  function currentMode() {
+    return modes.find((m) => m.id === state.mode) || modes[0];
   }
 
-  function getQuest(questId) {
-    return DATA.quests.find((quest) => quest.id === questId);
-  }
-
-  function getNodeProofs(nodeId) {
-    return state.proofs.filter((proof) => proof.nodeId === nodeId);
-  }
-
-  function getQuestProofs(questId) {
-    return state.proofs.filter((proof) => proof.questId === questId);
-  }
-
-  function getQuestForNode(nodeId) {
-    return DATA.quests.find((quest) => quest.nodeId === nodeId && state.questStatus[quest.id] !== "done")
-      || DATA.quests.find((quest) => quest.nodeId === nodeId)
-      || null;
-  }
-
-  function getNodeProgress(node) {
-    const proofs = getNodeProofs(node.id).length;
-    const required = node.requiredProofs || 1;
-    const percent = Math.min(100, Math.round((proofs / required) * 100));
-    const completedLinkedQuests = DATA.quests
-      .filter((quest) => quest.nodeId === node.id && state.questStatus[quest.id] === "done")
-      .length;
-
-    let label = "Unbewiesen";
-    let tone = "status-danger";
-
-    if (percent >= 100) {
-      label = "Stabilisiert";
-      tone = "status-ok";
-    } else if (proofs > 0 || completedLinkedQuests > 0) {
-      label = "In Arbeit";
-      tone = "status-warning";
-    } else if (node.initialConfidence >= 3) {
-      label = "Bekannt, ungeprüft";
-      tone = "status-warning";
+  function relevantItems() {
+    const mode = currentMode();
+    let base = items();
+    if (mode.target !== "all") base = base.filter((item) => item.group === mode.target);
+    if (state.filterGroup !== "all") {
+      base = base.filter((item) => clusterKey(item) === state.filterGroup);
     }
-
-    return { proofs, required, percent, label, tone };
+    return base;
   }
 
-  function getGlobalStats() {
-    const totalNodes = DATA.mapNodes.length;
-    const stabilizedNodes = DATA.mapNodes.filter((node) => getNodeProgress(node).percent >= 100).length;
-    const doneQuests = DATA.quests.filter((quest) => state.questStatus[quest.id] === "done").length;
-    const proofCount = state.proofs.length;
-    const totalRequiredProofs = DATA.mapNodes.reduce((sum, node) => sum + (node.requiredProofs || 1), 0);
-    const earnedProofs = DATA.mapNodes.reduce((sum, node) => sum + Math.min(getNodeProofs(node.id).length, node.requiredProofs || 1), 0);
-    const proofPercent = totalRequiredProofs ? Math.round((earnedProofs / totalRequiredProofs) * 100) : 0;
-
-    return { totalNodes, stabilizedNodes, doneQuests, proofCount, proofPercent };
+  function clusterKey(item) {
+    if (item.group === "plants") return `plants:${item.family || "Unbekannt"}`;
+    return `animals:${item.order || item.family || item.className || "Unbekannt"}`;
   }
 
-  function getDangerScore(node) {
-    const progress = getNodeProgress(node);
-    const lack = 100 - progress.percent;
-    const confidencePenalty = Math.max(0, 4 - node.initialConfidence) * 14;
-    const importanceBoost = node.importance * 8;
-    return lack + confidencePenalty + importanceBoost;
+  function clusterTitle(key) {
+    const [group, name] = key.split(":");
+    if (group === "plants") return `${name}`;
+    return name;
   }
 
-  function getCriticalNodes(limit = 3) {
-    return [...DATA.mapNodes]
-      .map((node) => ({ node, score: getDangerScore(node), progress: getNodeProgress(node) }))
-      .filter((item) => item.progress.percent < 100)
-      .sort((a, b) => b.score - a.score)
-      .slice(0, limit);
+  function mastery(item) {
+    return state.mastery[item.id] || { family: 0, species: 0, traits: 0, recognition: 0, attempts: 0, correct: 0 };
   }
 
-  function getRecommendedQuest() {
-    const activeMode = state.activeModeId;
-    const openQuests = DATA.quests.filter((quest) => state.questStatus[quest.id] !== "done");
-    const modeQuest = openQuests.find((quest) => quest.modeHint === activeMode);
-    if (modeQuest) return modeQuest;
-
-    const criticalNode = getCriticalNodes(1)[0]?.node;
-    if (criticalNode) {
-      const quest = openQuests.find((item) => item.nodeId === criticalNode.id);
-      if (quest) return quest;
-    }
-
-    return openQuests[0] || DATA.quests[0] || null;
+  function masteryPercent(item) {
+    const m = mastery(item);
+    const values = [m.family || 0, m.species || 0, m.traits || 0, m.recognition || 0];
+    return Math.round(values.reduce((a, b) => a + b, 0) / (values.length * 3) * 100);
   }
 
-  function formatDate(isoString) {
-    return new Intl.DateTimeFormat("de-DE", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit"
-    }).format(new Date(isoString));
+  function itemName(item) {
+    return item.germanName || item.displayName || item.scientificName || "Unbenannt";
   }
 
-  function escapeHTML(value) {
-    return String(value)
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
+  function scientific(item) {
+    return item.scientificName || item.displayName || "—";
   }
 
-  function setActiveQuest(questId) {
-    const quest = getQuest(questId);
-    if (!quest) return;
-    state.activeQuestId = quest.id;
-    state.selectedNodeId = quest.nodeId;
-    saveState();
-    render();
-    $("#activeQuestPanel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  function daysUntil(dateStr) {
+    const today = new Date();
+    const target = new Date(`${dateStr}T00:00:00`);
+    return Math.ceil((target - today) / 86400000);
   }
 
-  function setSelectedNode(nodeId) {
-    const node = getNode(nodeId);
-    if (!node) return;
-    state.selectedNodeId = node.id;
-    const quest = getQuestForNode(node.id);
-    if (quest) state.activeQuestId = quest.id;
-    saveState();
-    render();
+  function examFor(group) {
+    return DATA.exams.find((exam) => exam.scope === group);
   }
 
-  function toggleStep(questId, stepIndex, checked) {
-    const current = state.questSteps[questId] || [];
-    current[stepIndex] = checked;
-    state.questSteps[questId] = current;
-    saveState();
-    renderActiveQuest();
+  function overallStats() {
+    const all = items();
+    const plants = DATA.plants;
+    const animals = DATA.animals;
+    const mastered = all.filter((item) => masteryPercent(item) >= 80).length;
+    return { all: all.length, plants: plants.length, animals: animals.length, mastered };
   }
 
-  function saveProof({ completeQuest }) {
-    const quest = getQuest(state.activeQuestId);
-    if (!quest) return;
-
-    const input = $("#proofInput");
-    const text = input?.value.trim() || "";
-
-    if (text.length < 30) {
-      alert("Der Lernbeweis ist noch zu kurz. Schreib mindestens 30 Zeichen, damit es kein Fake-Haken wird.");
-      input?.focus();
-      return;
-    }
-
-    const proof = {
-      id: crypto.randomUUID ? crypto.randomUUID() : `proof-${Date.now()}`,
-      questId: quest.id,
-      nodeId: quest.nodeId,
-      text,
-      createdAt: new Date().toISOString()
-    };
-
-    state.proofs.unshift(proof);
-
-    if (completeQuest) {
-      state.questStatus[quest.id] = "done";
-      state.questSteps[quest.id] = quest.steps.map(() => true);
-    }
-
-    const nextQuest = getRecommendedQuest();
-    if (completeQuest && nextQuest && nextQuest.id !== quest.id) {
-      state.activeQuestId = nextQuest.id;
-      state.selectedNodeId = nextQuest.nodeId;
-    }
-
-    saveState();
-    render();
-  }
-
-  function deleteProof(proofId) {
-    const confirmed = confirm("Diesen Lernbeweis löschen?");
-    if (!confirmed) return;
-    state.proofs = state.proofs.filter((proof) => proof.id !== proofId);
-    saveState();
-    render();
-  }
-
-  function reopenQuest(questId) {
-    delete state.questStatus[questId];
-    saveState();
-    render();
-  }
-
-  function renderHeaderStats() {
-    const stats = getGlobalStats();
+  function renderHeader() {
+    const s = overallStats();
+    const pExam = examFor("plants");
+    const aExam = examFor("animals");
     $("#headerStats").innerHTML = `
-      <div class="stat-pill"><strong>${stats.proofPercent}%</strong><span>belegter Fortschritt</span></div>
-      <div class="stat-pill"><strong>${stats.stabilizedNodes}/${stats.totalNodes}</strong><span>Knoten stabilisiert</span></div>
-      <div class="stat-pill"><strong>${stats.proofCount}</strong><span>Lernbeweise</span></div>
+      <div class="stat-pill"><strong>${s.mastered}/${s.all}</strong><span>sicher ≥80%</span></div>
+      <div class="stat-pill"><strong>${s.plants}</strong><span>Pflanzen</span></div>
+      <div class="stat-pill"><strong>${s.animals}</strong><span>Tiere</span></div>
+      <div class="stat-pill"><strong>${daysUntil(pExam.date)}</strong><span>Tage Pflanzen</span></div>
+      <div class="stat-pill"><strong>${daysUntil(aExam.date)}</strong><span>Tage Tiere</span></div>
     `;
   }
 
   function renderQuickstart() {
-    const recommended = getRecommendedQuest();
-    const node = recommended ? getNode(recommended.nodeId) : null;
-    const critical = getCriticalNodes(1)[0];
-    const stats = getGlobalStats();
-
+    const mode = currentMode();
+    const pExam = examFor("plants");
+    const aExam = examFor("animals");
+    const weak = getWeakItems(1)[0];
     $("#quickstartCard").innerHTML = `
-      <div class="quickstart-layout">
+      <div class="quick-grid">
         <div>
           <p class="eyebrow">Schnellstart</p>
-          <h2>${recommended ? escapeHTML(recommended.title) : "Alles erledigt"}</h2>
-          <p>
-            ${recommended
-              ? `Empfohlen für <strong>${escapeHTML(node?.title || "unbekannt")}</strong>: ${escapeHTML(recommended.objective)}`
-              : "Alle aktuellen Quests sind abgeschlossen. Ergänze neue echte Prüfungsdaten in data.js."
-            }
-          </p>
-          ${critical ? `<p><span class="status-chip status-danger">Kritischster Knoten: ${escapeHTML(critical.node.title)} · ${critical.progress.percent}% belegt</span></p>` : ""}
+          <h2>${escapeHTML(mode.label)} trainieren</h2>
+          <p class="muted">${escapeHTML(mode.text)} Fortschritt steigt nur durch richtige Quizantworten oder einen gespeicherten Lernbeweis.</p>
+          <div class="exam-row">
+            <span class="exam-chip"><strong>${escapeHTML(pExam.title)}</strong>: ${formatDate(pExam.date)} · ${daysUntil(pExam.date)} Tage</span>
+            <span class="exam-chip"><strong>${escapeHTML(aExam.title)}</strong>: ${formatDate(aExam.date)} · ${daysUntil(aExam.date)} Tage</span>
+          </div>
+          ${weak ? `<p style="margin-top:12px"><span class="status-chip status-danger">Aktuelle Gefahrenzone: ${escapeHTML(itemName(weak))} · ${masteryPercent(weak)}%</span></p>` : ""}
         </div>
-        <div class="quickstart-actions">
-          ${recommended ? `<button class="primary-button" type="button" data-action="activate-quest" data-id="${recommended.id}">Aktive Quest starten</button>` : ""}
-          <button class="secondary-button" type="button" data-action="focus-danger">Gefahren ansehen</button>
-          <button class="ghost-button" type="button" data-action="reset-progress">Fortschritt zurücksetzen</button>
+        <div class="controls">
+          <button class="primary-button" type="button" data-action="new-quiz">Neue Frage</button>
+          <button class="ghost-button" type="button" data-action="focus-weak">Schwächstes Thema</button>
         </div>
-      </div>
-      <div class="reset-row">
-        <div class="progress-line" aria-label="Gesamtfortschritt"><span style="--value:${stats.proofPercent}%"></span></div>
       </div>
     `;
   }
 
   function renderModes() {
-    $("#modeBar").innerHTML = DATA.startModes.map((mode) => `
-      <button class="mode-button ${state.activeModeId === mode.id ? "is-active" : ""}" type="button" data-action="set-mode" data-id="${mode.id}">
-        <strong>${escapeHTML(mode.title)}</strong>
-        <span>${escapeHTML(mode.description)}</span>
+    $("#modeBar").innerHTML = modes.map((mode) => `
+      <button class="mode-button ${state.mode === mode.id ? "active" : ""}" type="button" data-action="set-mode" data-id="${mode.id}">
+        <strong>${escapeHTML(mode.label)}</strong><br><span>${escapeHTML(mode.text)}</span>
       </button>
     `).join("");
   }
 
-  function renderMapFilter() {
-    const areas = ["all", ...new Set(DATA.mapNodes.map((node) => node.area))];
-    $("#mapFilter").innerHTML = areas.map((area) => `
-      <button class="filter-chip ${state.selectedArea === area ? "is-active" : ""}" type="button" data-action="filter-area" data-id="${escapeHTML(area)}">
-        ${area === "all" ? "Alle Gebiete" : escapeHTML(area)}
-      </button>
-    `).join("");
+  function clusters() {
+    const mode = currentMode();
+    let base = items();
+    if (mode.target !== "all") base = base.filter((item) => item.group === mode.target);
+    const map = new Map();
+    base.forEach((item) => {
+      const key = clusterKey(item);
+      if (!map.has(key)) map.set(key, []);
+      map.get(key).push(item);
+    });
+    return [...map.entries()].map(([key, list]) => ({ key, list, avg: Math.round(list.reduce((s, item) => s + masteryPercent(item), 0) / list.length) }))
+      .sort((a, b) => a.avg - b.avg || b.list.length - a.list.length);
   }
 
   function renderMap() {
-    renderMapFilter();
-    const nodes = DATA.mapNodes.filter((node) => state.selectedArea === "all" || node.area === state.selectedArea);
+    const cls = clusters();
+    $("#mapFilter").innerHTML = `
+      <button class="filter-button ${state.filterGroup === "all" ? "active" : ""}" type="button" data-action="set-filter" data-id="all">Alle</button>
+      ${cls.slice(0, 18).map((c) => `<button class="filter-button ${state.filterGroup === c.key ? "active" : ""}" type="button" data-action="set-filter" data-id="${escapeAttr(c.key)}">${escapeHTML(clusterTitle(c.key))}</button>`).join("")}
+    `;
+    $("#examMap").innerHTML = cls.map((c) => {
+      const tone = c.avg >= 80 ? "status-ok" : c.avg >= 35 ? "status-warning" : "status-danger";
+      return `<article class="node-card ${state.filterGroup === c.key ? "active" : ""}">
+        <div>
+          <h3>${escapeHTML(clusterTitle(c.key))}</h3>
+          <div class="meta-line"><span>${c.list.length} Einträge</span><span>${c.avg}% sicher</span></div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${c.avg}%"></div></div>
+        <span class="status-chip ${tone}">${c.avg >= 80 ? "stabil" : c.avg >= 35 ? "im Aufbau" : "kritisch"}</span>
+        <button class="ghost-button" type="button" data-action="set-filter" data-id="${escapeAttr(c.key)}">Öffnen</button>
+      </article>`;
+    }).join("");
+  }
 
-    $("#examMap").innerHTML = nodes.map((node) => {
-      const progress = getNodeProgress(node);
-      const linked = node.connections.map((id) => getNode(id)?.title).filter(Boolean).join(" · ");
-      return `
-        <button class="node-card ${state.selectedNodeId === node.id ? "is-selected" : ""}" type="button" data-action="select-node" data-id="${node.id}">
-          <div class="node-meta">
-            <span class="status-chip ${progress.tone}">${progress.label}</span>
-            <span class="status-chip">${progress.proofs}/${progress.required} Beweise</span>
-            <span class="status-chip">Relevanz ${node.importance}/5</span>
-          </div>
-          <div>
-            <h3>${escapeHTML(node.title)}</h3>
-            <p>${escapeHTML(node.summary)}</p>
-          </div>
-          <div class="progress-line"><span style="--value:${progress.percent}%"></span></div>
-          <div class="node-meta">
-            ${node.tags.map((tag) => `<span class="tag">${escapeHTML(tag)}</span>`).join("")}
-          </div>
-          <p><small>Verknüpft: ${escapeHTML(linked || "noch offen")}</small></p>
-        </button>
-      `;
-    }).join("") || emptyTemplate();
+  function getWeakItems(limit = 8) {
+    const pool = relevantItems().length ? relevantItems() : items();
+    return [...pool].sort((a, b) => masteryPercent(a) - masteryPercent(b)).slice(0, limit);
   }
 
   function renderDangerZones() {
-    const criticalNodes = getCriticalNodes(4);
-    const manualZones = DATA.dangerZones.map((zone) => {
-      const zoneNodes = zone.nodeIds.map(getNode).filter(Boolean);
-      const averageProgress = zoneNodes.length
-        ? Math.round(zoneNodes.reduce((sum, node) => sum + getNodeProgress(node).percent, 0) / zoneNodes.length)
-        : 0;
-      return { ...zone, averageProgress, zoneNodes };
-    });
-
-    const html = `
-      <div class="danger-list">
-        ${manualZones.map((zone) => `
-          <article class="danger-item">
-            <div class="node-meta">
-              <span class="status-chip ${zone.averageProgress < 40 ? "status-danger" : "status-warning"}">${zone.averageProgress}% belegt</span>
-              <span class="status-chip">${zone.zoneNodes.length} Knoten</span>
-            </div>
-            <h3>${escapeHTML(zone.title)}</h3>
-            <p>${escapeHTML(zone.reason)}</p>
-            <p><strong>Nächste echte Handlung:</strong> ${escapeHTML(zone.suggestedAction)}</p>
-          </article>
-        `).join("")}
+    const weak = getWeakItems(6);
+    $("#dangerZones").innerHTML = weak.length ? weak.map((item) => `
+      <div class="danger-zone">
+        <h3>${escapeHTML(itemName(item))}</h3>
+        <div class="meta-line"><span>${escapeHTML(scientific(item))}</span><span>${escapeHTML(item.family || item.order || "")}</span><span>${masteryPercent(item)}%</span></div>
+        <button class="ghost-button" type="button" data-action="train-item" data-id="${item.id}">Jetzt prüfen</button>
       </div>
-      <div class="reset-row">
-        <p class="eyebrow">Automatisch kritisch</p>
-        <div class="danger-list">
-          ${criticalNodes.map(({ node, progress }) => `
-            <article class="danger-item">
-              <div class="node-meta">
-                <span class="status-chip status-danger">${progress.percent}%</span>
-                <span class="status-chip">${escapeHTML(node.exam)}</span>
-              </div>
-              <h3>${escapeHTML(node.title)}</h3>
-              <p>${escapeHTML(node.summary)}</p>
-              <button class="tiny-button" type="button" data-action="select-node" data-id="${node.id}">Knoten öffnen</button>
-            </article>
-          `).join("")}
-        </div>
-      </div>
-    `;
-
-    $("#dangerZones").innerHTML = html;
+    `).join("") : `<div class="empty-state">Keine Gefahrenzone im aktuellen Filter.</div>`;
   }
 
   function renderQuestLog() {
-    const mode = state.activeModeId;
-    const sortedQuests = [...DATA.quests].sort((a, b) => {
-      const aDone = state.questStatus[a.id] === "done" ? 1 : 0;
-      const bDone = state.questStatus[b.id] === "done" ? 1 : 0;
-      const aMode = a.modeHint === mode ? -1 : 0;
-      const bMode = b.modeHint === mode ? -1 : 0;
-      return aDone - bDone || aMode - bMode;
-    });
-
-    $("#questLog").innerHTML = `
-      <div class="quest-list">
-        ${sortedQuests.map((quest) => {
-          const node = getNode(quest.nodeId);
-          const done = state.questStatus[quest.id] === "done";
-          const proofs = getQuestProofs(quest.id).length;
-          return `
-            <button class="quest-item ${state.activeQuestId === quest.id ? "is-active" : ""} ${done ? "is-done" : ""}" type="button" data-action="activate-quest" data-id="${quest.id}">
-              <div class="quest-meta">
-                <span class="status-chip ${done ? "status-ok" : "status-warning"}">${done ? "Belegt" : "Offen"}</span>
-                <span class="status-chip">${escapeHTML(quest.type)}</span>
-                <span class="status-chip">${quest.estimatedMinutes} min</span>
-                ${proofs ? `<span class="status-chip">${proofs} Beweis(e)</span>` : ""}
-              </div>
-              <div>
-                <h3>${escapeHTML(quest.title)}</h3>
-                <p>${escapeHTML(node?.title || "Unbekannter Knoten")} · ${escapeHTML(quest.objective)}</p>
-              </div>
-            </button>
-          `;
-        }).join("")}
+    const plantsExam = examFor("plants");
+    const animalsExam = examFor("animals");
+    const plantOpen = DATA.plants.filter((item) => masteryPercent(item) < 80).length;
+    const animalOpen = DATA.animals.filter((item) => masteryPercent(item) < 80).length;
+    const plantPerDay = Math.max(1, Math.ceil(plantOpen / Math.max(1, daysUntil(plantsExam.date))));
+    const animalPerDay = Math.max(1, Math.ceil(animalOpen / Math.max(1, daysUntil(animalsExam.date))));
+    const quests = [
+      { title: `Pflanzen: ${plantPerDay} neue/stabile Einträge`, text: `${plantOpen} Pflanzen unter 80%. Familien zuerst.` , mode: "plants"},
+      { title: `Tiere: ${animalPerDay} neue/stabile Einträge`, text: `${animalOpen} Tiere unter 80%. Ordnung/Familie zuerst.` , mode: "animals"},
+      { title: "Merkmalsbeweis", text: "Nimm 1 unsicheren Eintrag und schreibe 3 echte Merkmale auf.", mode: "traits"}
+    ];
+    $("#questLog").innerHTML = quests.map((q) => `
+      <div class="quest-item">
+        <h3>${escapeHTML(q.title)}</h3>
+        <p class="muted">${escapeHTML(q.text)}</p>
+        <button class="ghost-button" type="button" data-action="set-mode" data-id="${q.mode}">Starten</button>
       </div>
-    `;
+    `).join("");
+  }
+
+  function makeQuiz(forcedItem = null) {
+    const mode = currentMode();
+    const pool = relevantItems().filter((item) => item.family || item.germanName || item.scientificName || item.displayName);
+    const item = forcedItem || weightedPick(pool.length ? pool : items());
+    const questionType = mode.question;
+    let prompt = "";
+    let answer = "";
+    let field = "family";
+
+    if (questionType === "species") {
+      field = "species";
+      if (item.scientificName || item.displayName) {
+        prompt = `Welcher deutsche Name gehört zu: ${scientific(item)}?`;
+        answer = item.germanName || itemName(item);
+      } else {
+        prompt = `Zu welcher Familie gehört: ${itemName(item)}?`;
+        answer = item.family || item.familyGerman || item.order || "Unbekannt";
+        field = "family";
+      }
+    } else if (questionType === "traits") {
+      field = "traits";
+      prompt = `Nenne einen sicheren Erkennungsbeweis für: ${itemName(item)} (${scientific(item)}).`;
+      answer = (DATA.familyHints[item.family] || item.traits || ["Eigene Merkmale prüfen"])[0] || "Merkmal prüfen";
+    } else {
+      field = "family";
+      prompt = `Welche Familie hat: ${itemName(item)} (${scientific(item)})?`;
+      answer = item.family || item.familyGerman || item.order || "Unbekannt";
+    }
+
+    const options = buildOptions(answer, field, item);
+    state.quiz = { itemId: item.id, prompt, answer, options, field, checked: false, selected: null };
+    saveState();
+    render();
+  }
+
+  function weightedPick(pool) {
+    const sorted = [...pool].sort((a, b) => masteryPercent(a) - masteryPercent(b));
+    const top = sorted.slice(0, Math.max(8, Math.ceil(sorted.length * 0.35)));
+    return top[Math.floor(Math.random() * top.length)] || sorted[0];
+  }
+
+  function buildOptions(answer, field, item) {
+    const cleanAnswer = answer || "Unbekannt";
+    let candidates = [];
+    if (field === "family") {
+      candidates = [...new Set(items().map((x) => x.family || x.familyGerman || x.order).filter(Boolean))];
+    } else if (field === "species") {
+      candidates = [...new Set(items().map((x) => x.germanName).filter(Boolean))];
+    } else {
+      candidates = [...new Set([...(DATA.familyHints[item.family] || []), "Fundort + Blüte/Blatt vergleichen", "Verwechslungspartner nennen", "Familie anhand Schlüsselmerkmal prüfen"])];
+    }
+    const wrong = candidates.filter((x) => x !== cleanAnswer).sort(() => Math.random() - 0.5).slice(0, 3);
+    return [cleanAnswer, ...wrong].sort(() => Math.random() - 0.5);
+  }
+
+  function answerQuiz(selected) {
+    if (!state.quiz) return;
+    const correct = selected === state.quiz.answer;
+    state.quiz.selected = selected;
+    state.quiz.checked = true;
+    const item = items().find((x) => x.id === state.quiz.itemId);
+    if (item) {
+      const m = mastery(item);
+      m.attempts = (m.attempts || 0) + 1;
+      if (correct) {
+        m.correct = (m.correct || 0) + 1;
+        m[state.quiz.field] = Math.min(3, (m[state.quiz.field] || 0) + 1);
+      } else {
+        m[state.quiz.field] = Math.max(0, (m[state.quiz.field] || 0) - 1);
+      }
+      state.mastery[item.id] = m;
+    }
+    saveState();
+    renderActiveQuest();
+    renderHeader();
+    renderMap();
+    renderDangerZones();
+    renderQuestLog();
   }
 
   function renderActiveQuest() {
-    const quest = getQuest(state.activeQuestId) || getRecommendedQuest();
-    if (!quest) {
-      $("#activeQuestPanel").innerHTML = emptyTemplate();
-      return;
-    }
-
-    const node = getNode(quest.nodeId);
-    const done = state.questStatus[quest.id] === "done";
-    const stepState = state.questSteps[quest.id] || [];
-    const proofs = getQuestProofs(quest.id);
-    const nodeProgress = node ? getNodeProgress(node) : null;
-
+    const quiz = state.quiz;
+    const item = quiz ? items().find((x) => x.id === quiz.itemId) : getWeakItems(1)[0];
+    const hints = item ? DATA.familyHints[item.family] || item.traits || [] : [];
     $("#activeQuestPanel").innerHTML = `
       <div class="section-title-row">
         <div>
           <p class="eyebrow">Aktive Quest</p>
-          <h2>${escapeHTML(quest.title)}</h2>
+          <h2>${item ? escapeHTML(itemName(item)) : "Keine Auswahl"}</h2>
         </div>
-        <div class="inline-actions">
-          ${done ? `<button class="secondary-button" type="button" data-action="reopen-quest" data-id="${quest.id}">Wieder öffnen</button>` : ""}
-        </div>
+        <button class="primary-button" type="button" data-action="new-quiz">Neue Frage</button>
       </div>
       <div class="active-layout">
-        <div>
-          <div class="quest-meta">
-            <span class="status-chip ${done ? "status-ok" : "status-warning"}">${done ? "Abgeschlossen mit Beweis" : "Offen"}</span>
-            <span class="status-chip">${escapeHTML(quest.type)}</span>
-            <span class="status-chip">${quest.estimatedMinutes} min</span>
-            ${nodeProgress ? `<span class="status-chip ${nodeProgress.tone}">${nodeProgress.proofs}/${nodeProgress.required} Knotenbeweise</span>` : ""}
-          </div>
-          <p>${escapeHTML(quest.objective)}</p>
-          <h3>Schritte</h3>
-          <ul class="step-list">
-            ${quest.steps.map((step, index) => `
-              <li>
-                <label>
-                  <input type="checkbox" ${stepState[index] ? "checked" : ""} data-action="toggle-step" data-quest-id="${quest.id}" data-step-index="${index}" />
-                  <span>${escapeHTML(step)}</span>
-                </label>
-              </li>
-            `).join("")}
-          </ul>
-          <p><strong>Fertig erst wenn:</strong> ${escapeHTML(quest.doneDefinition)}</p>
+        <div class="quiz-box">
+          <p class="eyebrow">Prüfmodus</p>
+          <div class="quiz-question">${quiz ? escapeHTML(quiz.prompt) : "Starte eine Quizfrage."}</div>
+          ${quiz ? `<div class="answer-grid">${quiz.options.map((opt) => {
+            let cls = "";
+            if (quiz.checked && opt === quiz.answer) cls = "correct";
+            if (quiz.checked && opt === quiz.selected && opt !== quiz.answer) cls = "wrong";
+            return `<button class="answer-button ${cls}" type="button" data-action="answer" data-value="${escapeAttr(opt)}">${escapeHTML(opt)}</button>`;
+          }).join("")}</div>` : ""}
+          ${quiz?.checked ? `<p style="margin-top:12px" class="${quiz.selected === quiz.answer ? "status-ok" : "status-danger"}">${quiz.selected === quiz.answer ? "Richtig. Fortschritt gespeichert." : `Nicht richtig. Erwartet: ${escapeHTML(quiz.answer)}`}</p>` : ""}
         </div>
-
-        <div class="proof-box">
-          <div>
-            <p class="eyebrow">Lernbeweis</p>
-            <h3>${escapeHTML(quest.proofPrompt)}</h3>
-          </div>
-          <textarea id="proofInput" placeholder="Schreib hier deine Erklärung, Rechnung, Skizzenbeschreibung oder Mini-Prüfungsantwort. Es muss nicht schön sein, aber eigenständig."></textarea>
-          <div class="inline-actions">
-            <button class="primary-button" type="button" data-action="save-proof-complete">Speichern & Quest abschließen</button>
-            <button class="secondary-button" type="button" data-action="save-proof-only">Nur Beweis speichern</button>
-          </div>
-          <div class="proof-history">
-            ${proofs.length ? proofs.map((proof) => `
-              <article class="proof-entry">
-                <time>${formatDate(proof.createdAt)}</time>
-                <p>${escapeHTML(proof.text)}</p>
-                <button class="tiny-button" type="button" data-action="delete-proof" data-id="${proof.id}">Beweis löschen</button>
-              </article>
-            `).join("") : emptyTemplate()}
-          </div>
+        <div>
+          <h3>Einordnung</h3>
+          ${item ? `<div class="meta-line"><span>${escapeHTML(item.group)}</span><span>${escapeHTML(item.order || "")}</span><span>${escapeHTML(item.family || "")}</span><span>${masteryPercent(item)}%</span></div>` : ""}
+          <h3 style="margin-top:14px">Merkmals-Check</h3>
+          ${hints.length ? hints.map((h) => `<label class="checkline"><input type="checkbox"> ${escapeHTML(h)}</label>`).join("") : `<p class="muted">Noch keine Merkmale hinterlegt. Nutze den Lernbeweis, um eigene Merkmale zu speichern.</p>`}
+          <textarea id="proofInput" placeholder="Lernbeweis: Woran erkennst du das Taxon? Was wäre ein Verwechslungspartner? Warum ist die Familie plausibel?"></textarea>
+          <div class="controls"><button class="primary-button" type="button" data-action="save-proof">Lernbeweis speichern</button></div>
         </div>
       </div>
     `;
   }
 
-  function renderResearchBook() {
-    const selectedNodeId = state.selectedNodeId;
-    const entries = DATA.researchBook.filter((entry) => entry.nodeId === selectedNodeId || entry.nodeId === "meta");
-    const node = getNode(selectedNodeId);
+  function saveProof() {
+    const quiz = state.quiz;
+    const item = quiz ? items().find((x) => x.id === quiz.itemId) : getWeakItems(1)[0];
+    const input = $("#proofInput");
+    const text = input?.value.trim() || "";
+    if (!item) return;
+    if (text.length < 30) {
+      alert("Der Lernbeweis ist noch zu kurz. Schreib mindestens 30 Zeichen.");
+      input?.focus();
+      return;
+    }
+    state.proofs.unshift({ id: crypto.randomUUID ? crypto.randomUUID() : `proof-${Date.now()}`, itemId: item.id, itemName: itemName(item), text, createdAt: new Date().toISOString() });
+    const m = mastery(item);
+    m.traits = Math.min(3, (m.traits || 0) + 1);
+    m.recognition = Math.min(3, (m.recognition || 0) + 1);
+    state.mastery[item.id] = m;
+    saveState();
+    render();
+  }
 
+  function renderResearchBook() {
+    const current = relevantItems().slice(0, 80);
     $("#researchBook").innerHTML = `
-      <div class="research-list">
-        ${node ? `
-          <article class="research-item">
-            <div class="research-meta">
-              <span class="status-chip">Ausgewählter Knoten</span>
-              <span class="status-chip">${escapeHTML(node.area)}</span>
-            </div>
-            <h3>${escapeHTML(node.title)}</h3>
-            <p>${escapeHTML(node.summary)}</p>
-          </article>
-        ` : ""}
-        ${entries.map((entry) => `
-          <article class="research-item">
-            <div class="research-meta">
-              <span class="status-chip">${escapeHTML(entry.type)}</span>
-            </div>
-            <h3>${escapeHTML(entry.title)}</h3>
-            <p>${escapeHTML(entry.summary)}</p>
-            ${entry.questions?.length ? `
-              <div class="reset-row">
-                ${entry.questions.map((question) => `<span class="tag">${escapeHTML(question)}</span>`).join(" ")}
-              </div>
-            ` : ""}
-          </article>
-        `).join("")}
+      <div class="active-layout">
+        <div>
+          <h3>Einträge im aktuellen Filter</h3>
+          <div class="item-list">
+            ${current.map((item) => `<article class="item-card">
+              <h3>${escapeHTML(itemName(item))}</h3>
+              <div class="meta-line"><span>${escapeHTML(scientific(item))}</span><span>${escapeHTML(item.family || item.order || "")}</span><span>${masteryPercent(item)}%</span></div>
+              <div class="progress-bar"><div class="progress-fill" style="width:${masteryPercent(item)}%"></div></div>
+              <button class="ghost-button" type="button" data-action="train-item" data-id="${item.id}">Prüfen</button>
+            </article>`).join("")}
+          </div>
+        </div>
+        <div>
+          <h3>Gespeicherte Lernbeweise</h3>
+          <div class="proof-list">
+            ${state.proofs.length ? state.proofs.slice(0, 10).map((p) => `<article class="proof-card"><h3>${escapeHTML(p.itemName)}</h3><p class="muted">${formatDateTime(p.createdAt)}</p><p>${escapeHTML(p.text)}</p></article>`).join("") : `<div class="empty-state">Noch keine Lernbeweise gespeichert.</div>`}
+          </div>
+        </div>
       </div>
     `;
   }
 
   function render() {
-    renderHeaderStats();
+    renderHeader();
     renderQuickstart();
     renderModes();
     renderMap();
     renderDangerZones();
     renderQuestLog();
+    if (!state.quiz) makeQuiz();
     renderActiveQuest();
     renderResearchBook();
   }
 
-  document.addEventListener("click", (event) => {
-    const target = event.target.closest("[data-action]");
-    if (!target) return;
-
-    const action = target.dataset.action;
-    const id = target.dataset.id;
-
-    if (action === "set-mode") {
-      state.activeModeId = id;
-      const recommended = getRecommendedQuest();
-      if (recommended) {
-        state.activeQuestId = recommended.id;
-        state.selectedNodeId = recommended.nodeId;
+  function handleClick(event) {
+    const button = event.target.closest("button");
+    if (!button) return;
+    const action = button.dataset.action;
+    const id = button.dataset.id;
+    if (action === "set-mode") { state.mode = id; state.filterGroup = "all"; state.quiz = null; saveState(); render(); }
+    if (action === "set-filter") { state.filterGroup = id; state.quiz = null; saveState(); render(); }
+    if (action === "reset-filter") { state.filterGroup = "all"; saveState(); render(); }
+    if (action === "new-quiz") makeQuiz();
+    if (action === "focus-weak") { const weak = getWeakItems(1)[0]; if (weak) makeQuiz(weak); }
+    if (action === "train-item") { const item = items().find((x) => x.id === id); if (item) makeQuiz(item); }
+    if (action === "answer") answerQuiz(button.dataset.value);
+    if (action === "save-proof") saveProof();
+    if (action === "reset-progress") {
+      if (confirm("Lokalen Fortschritt wirklich löschen? Das betrifft nur diesen Browser.")) {
+        state = { ...defaultState, mastery: {}, proofs: [], quiz: null };
+        saveState(); render();
       }
-      saveState();
-      render();
     }
+  }
 
-    if (action === "filter-area") {
-      state.selectedArea = id;
-      saveState();
-      renderMap();
-    }
+  function formatDate(date) { return new Intl.DateTimeFormat("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(`${date}T00:00:00`)); }
+  function formatDateTime(iso) { return new Intl.DateTimeFormat("de-DE", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }).format(new Date(iso)); }
+  function escapeHTML(v) { return String(v ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;"); }
+  function escapeAttr(v) { return escapeHTML(v).replaceAll("`", "&#096;"); }
 
-    if (action === "show-all-nodes") {
-      state.selectedArea = "all";
-      saveState();
-      renderMap();
-    }
-
-    if (action === "select-node") setSelectedNode(id);
-    if (action === "activate-quest") setActiveQuest(id);
-    if (action === "save-proof-complete") saveProof({ completeQuest: true });
-    if (action === "save-proof-only") saveProof({ completeQuest: false });
-    if (action === "delete-proof") deleteProof(id);
-    if (action === "reopen-quest") reopenQuest(id);
-    if (action === "reset-progress") resetState();
-
-    if (action === "focus-danger") {
-      document.querySelector(".danger-card")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  });
-
-  document.addEventListener("change", (event) => {
-    const target = event.target;
-    if (target?.dataset?.action === "toggle-step") {
-      toggleStep(target.dataset.questId, Number(target.dataset.stepIndex), target.checked);
-    }
-  });
-
+  document.addEventListener("click", handleClick);
   render();
 })();

@@ -3,30 +3,30 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ryos Lernarchiv v0.1</title>
+  <title>Ryos Lernarchiv v0.2</title>
   <link rel="stylesheet" href="style.css" />
   <script src="data.js" defer></script>
   <script src="script.js" defer></script>
 </head>
 <body>
   <div class="app-shell">
-    <header class="site-header" id="siteHeader">
+    <header class="site-header">
       <div>
-        <p class="eyebrow">Lokaler Prototyp v0.1</p>
+        <p class="eyebrow">Lokaler Prototyp v0.2</p>
         <h1>Ryos Lernarchiv</h1>
-        <p class="subtitle">Ein funktionales Forschungsarchiv für Prüfungsstoff.</p>
+        <p class="subtitle">Formenkenntnis: Familie wissen, Art erkennen, Merkmale beweisen.</p>
       </div>
-      <div class="header-stats" id="headerStats" aria-label="Fortschritt"></div>
+      <div class="header-stats" id="headerStats"></div>
     </header>
 
-    <main class="dashboard" id="app" aria-live="polite">
+    <main class="dashboard" id="app">
       <section class="card quickstart-card" id="quickstartCard"></section>
 
       <section class="card startmode-card">
         <div class="section-title-row">
           <div>
             <p class="eyebrow">Startmodus</p>
-            <h2>Wie willst du anfangen?</h2>
+            <h2>Was trainierst du jetzt?</h2>
           </div>
         </div>
         <div class="mode-bar" id="modeBar"></div>
@@ -36,9 +36,9 @@
         <div class="section-title-row">
           <div>
             <p class="eyebrow">Prüfungslandkarte</p>
-            <h2>Gebiete & Knoten</h2>
+            <h2>Familien & Ordnungen</h2>
           </div>
-          <button class="ghost-button" type="button" data-action="show-all-nodes">Alle anzeigen</button>
+          <button class="ghost-button" type="button" data-action="reset-filter">Alle anzeigen</button>
         </div>
         <div class="map-filter" id="mapFilter"></div>
         <div class="map-grid" id="examMap"></div>
@@ -59,7 +59,7 @@
           <div class="section-title-row">
             <div>
               <p class="eyebrow">Questlog</p>
-              <h2>Konkrete Lernhandlungen</h2>
+              <h2>Heute sinnvoll</h2>
             </div>
           </div>
           <div id="questLog"></div>
@@ -72,19 +72,13 @@
         <div class="section-title-row">
           <div>
             <p class="eyebrow">Forschungsbuch</p>
-            <h2>Notizen, Leitfragen & Belege</h2>
+            <h2>Lernbeweise & offene Merkmale</h2>
           </div>
+          <button class="ghost-button danger" type="button" data-action="reset-progress">Fortschritt löschen</button>
         </div>
         <div id="researchBook"></div>
       </section>
     </main>
   </div>
-
-  <template id="emptyStateTemplate">
-    <div class="empty-state">
-      <strong>Noch nichts gespeichert.</strong>
-      <span>Füge einen Lernbeweis hinzu, um echten Fortschritt sichtbar zu machen.</span>
-    </div>
-  </template>
 </body>
 </html>
