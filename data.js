@@ -1,7 +1,7 @@
 window.LEARNING_ARCHIVE_DATA = {
   "app": {
     "title": "Ryos Lernarchiv",
-    "version": "0.2.1",
+    "version": "0.2.3",
     "focus": "Formenkenntnis Tiere & Pflanzen",
     "motto": "Erkennen, einordnen, beweisen – nicht nur abhaken."
   },

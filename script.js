@@ -99,6 +99,21 @@
     return item.scientificName || item.displayName || "—";
   }
 
+  function groupLabel(item) {
+    if (!item) return "";
+    if (item.group === "plants") return "Pflanze";
+    if (item.group === "animals") return "Tier";
+    return item.group || "";
+  }
+
+  function itemTaxonomyLine(item) {
+    if (!item) return "";
+    const parts = [groupLabel(item)];
+    if (item.order) parts.push(`Ordnung: ${item.order}`);
+    if (item.family) parts.push(`Familie: ${item.family}`);
+    return parts.filter(Boolean);
+  }
+
   function daysUntil(dateStr) {
     const today = new Date();
     const target = new Date(`${dateStr}T00:00:00`);
@@ -320,7 +335,13 @@
     const cleanAnswer = answer || "Unbekannt";
     let candidates = [];
     if (field === "family") {
-      candidates = [...new Set(items().map((x) => x.family || x.familyGerman || x.order).filter(Boolean))];
+      if (item?.group === "plants") {
+        candidates = plantFamilies();
+      } else if (item?.group === "animals") {
+        candidates = [...new Set(DATA.animals.map((x) => x.family || x.familyGerman || x.order || x.className).filter(Boolean))];
+      } else {
+        candidates = [...new Set(relevantItems().map((x) => x.family || x.familyGerman || x.order || x.className).filter(Boolean))];
+      }
     } else if (field === "species") {
       candidates = [...new Set(items().map((x) => x.germanName).filter(Boolean))];
     } else {
@@ -383,11 +404,27 @@
     }
     const item = quiz ? items().find((x) => x.id === quiz.itemId) : getWeakItems(1)[0];
     const hints = item ? DATA.familyHints[item.family] || item.traits || [] : [];
+    const revealDetails = !quiz || quiz.checked;
+    const questTitle = !quiz
+      ? (item ? itemName(item) : "Keine Auswahl")
+      : revealDetails && item
+        ? itemName(item)
+        : quiz.field === "species"
+          ? "Artnamen-Quiz"
+          : quiz.field === "family"
+            ? "Familienfrage"
+            : "Merkmalsfrage";
+    const hiddenMeta = item
+      ? `<div class="meta-line"><span>${escapeHTML(groupLabel(item))}</span><span>Einordnung nach deiner Antwort</span><span>${masteryPercent(item)}%</span></div>`
+      : "";
+    const visibleMeta = item
+      ? `<div class="meta-line">${itemTaxonomyLine(item).map((part) => `<span>${escapeHTML(part)}</span>`).join("")}<span>${masteryPercent(item)}%</span></div>`
+      : "";
     $("#activeQuestPanel").innerHTML = `
       <div class="section-title-row">
         <div>
           <p class="eyebrow">Aktive Quest</p>
-          <h2>${item ? escapeHTML(itemName(item)) : "Keine Auswahl"}</h2>
+          <h2>${escapeHTML(questTitle)}</h2>
         </div>
         <button class="primary-button" type="button" data-action="new-quiz">Neue Frage</button>
       </div>
@@ -405,11 +442,13 @@
         </div>
         <div>
           <h3>Einordnung</h3>
-          ${item ? `<div class="meta-line"><span>${escapeHTML(item.group)}</span><span>${escapeHTML(item.order || "")}</span><span>${escapeHTML(item.family || "")}</span><span>${masteryPercent(item)}%</span></div>` : ""}
+          ${revealDetails ? visibleMeta : hiddenMeta}
           <h3 style="margin-top:14px">Merkmals-Check</h3>
-          ${hints.length ? hints.map((h) => `<label class="checkline"><input type="checkbox"> ${escapeHTML(h)}</label>`).join("") : `<p class="muted">Noch keine Merkmale hinterlegt. Nutze den Lernbeweis, um eigene Merkmale zu speichern.</p>`}
-          <textarea id="proofInput" placeholder="Lernbeweis: Woran erkennst du das Taxon? Was wäre ein Verwechslungspartner? Warum ist die Familie plausibel?"></textarea>
-          <div class="controls"><button class="primary-button" type="button" data-action="save-proof">Lernbeweis speichern</button></div>
+          ${revealDetails
+            ? (hints.length ? hints.map((h) => `<label class="checkline"><input type="checkbox"> ${escapeHTML(h)}</label>`).join("") : `<p class="muted">Noch keine Merkmale hinterlegt. Nutze den Lernbeweis, um eigene Merkmale zu speichern.</p>`)
+            : `<p class="muted">Familie, Einordnung und Merkmale werden erst nach deiner Antwort angezeigt, damit nichts verraten wird.</p>`}
+          ${revealDetails ? `<textarea id="proofInput" placeholder="Lernbeweis: Woran erkennst du das Taxon? Was wäre ein Verwechslungspartner? Warum ist die Familie plausibel?"></textarea>
+          <div class="controls"><button class="primary-button" type="button" data-action="save-proof">Lernbeweis speichern</button></div>` : `<div class="empty-state">Wähle zuerst eine Antwort. Danach erscheinen Diagnosemerkmale und Lernbeweis.</div>`}
         </div>
       </div>
     `;
@@ -418,6 +457,7 @@
   function renderFamilyDrillQuest() {
     const quiz = state.quiz;
     const contrasts = (DATA.familyContrasts?.[quiz.family] || []).filter((family) => DATA.familyHints?.[family]);
+    const revealDetails = quiz.checked;
     $("#activeQuestPanel").innerHTML = `
       <div class="section-title-row">
         <div>
@@ -439,7 +479,7 @@
           ${quiz.checked ? `<p style="margin-top:12px" class="${quiz.selected === quiz.answer ? "status-ok" : "status-danger"}">${quiz.selected === quiz.answer ? "Richtig. Familienverständnis gespeichert." : `Nicht richtig. Erwartet: ${escapeHTML(quiz.answer)}`}</p>` : ""}
         </div>
         <div>
-          <h3>${escapeHTML(quiz.family)}</h3>
+          ${revealDetails ? `<h3>${escapeHTML(quiz.family)}</h3>
           <div class="meta-line"><span>${familyItems(quiz.family).length} Pflanzen in deiner Liste</span><span>${familyPercent(quiz.family)}% Familiensicherheit</span></div>
           <h3 style="margin-top:14px">Diagnosemerkmale</h3>
           ${quiz.traits.map((h) => `<label class="checkline"><input type="checkbox"> ${escapeHTML(h)}</label>`).join("")}
@@ -447,7 +487,9 @@
           <p class="muted">${quiz.examples.map(escapeHTML).join(" · ") || "Keine Beispiele gefunden."}</p>
           ${contrasts.length ? `<h3 style="margin-top:14px">Nicht verwechseln mit</h3><div class="contrast-list">${contrasts.map((family) => `<details class="contrast-card"><summary>${escapeHTML(family)}</summary><p>${(DATA.familyHints[family] || []).map(escapeHTML).join(" · ")}</p></details>`).join("")}</div>` : ""}
           <textarea id="proofInput" placeholder="Familienbeweis: Warum ist das diese Familie? Welches Merkmal wäre am sichersten? Womit würdest du sie verwechseln?"></textarea>
-          <div class="controls"><button class="primary-button" type="button" data-action="save-family-proof">Familienbeweis speichern</button></div>
+          <div class="controls"><button class="primary-button" type="button" data-action="save-family-proof">Familienbeweis speichern</button></div>` : `<h3>Diagnose nach Antwort</h3>
+          <p class="muted">Die Familienantwort, Beispiele und Verwechslungen werden erst nach deiner Auswahl angezeigt. So bleibt die Übung wirklich prüfend.</p>
+          <div class="empty-state">Erst Familie auswählen, dann Diagnosemerkmale absichern.</div>`}
         </div>
       </div>
     `;
