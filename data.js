@@ -1,9 +1,30 @@
 window.LEARNING_ARCHIVE_DATA = {
   "app": {
     "title": "Ryos Lernarchiv",
-    "version": "0.2.3",
+    "version": "0.2.5",
     "focus": "Formenkenntnis Tiere & Pflanzen",
     "motto": "Erkennen, einordnen, beweisen – nicht nur abhaken."
+  },
+  "examPlantFamilies": [
+    "Apiaceae",
+    "Asteraceae",
+    "Boraginaceae",
+    "Brassicaceae",
+    "Caryophyllaceae",
+    "Cyperaceae",
+    "Fabaceae",
+    "Juncaceae",
+    "Lamiaceae",
+    "Liliaceae",
+    "Plantaginaceae",
+    "Scrophulariaceae",
+    "Poaceae",
+    "Ranunculaceae",
+    "Rosaceae"
+  ],
+  "familyDisplayNames": {
+    "Plantaginaceae": "Plantaginaceae",
+    "Scrophulariaceae": "Scrophulariaceae"
   },
   "exams": [
     {
@@ -242,6 +263,18 @@ window.LEARNING_ARCHIVE_DATA = {
       "Kapsel häufig",
       "Familie enthält Wegerich und Ehrenpreis"
     ],
+    "Liliaceae": [
+      "einkeimblättrige Kräuter",
+      "Blüten meist dreizählig",
+      "sechs Perigonblätter ähnlich ausgebildet",
+      "Blätter meist parallelnervig"
+    ],
+    "Scrophulariaceae": [
+      "Blüten meist zygomorph",
+      "oft zweilippige oder maskierte Blüten",
+      "meist 4 Staubblätter, teils reduziert",
+      "Kapsel häufig"
+    ],
     "Polygonaceae": [
       "Ochrea / Nebenblattscheide häufig",
       "kleine Blüten",
@@ -296,8 +329,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Weiß-Tanne",
       "family": "Pinaceae",
       "genus": "Abies",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/abies-alba.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 1
     },
     {
       "id": "plant-acer-campestre",
@@ -309,8 +345,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Feld-Ahorn",
       "family": "Sapindaceae",
       "genus": "Acer",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/acer-campestre.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 1
     },
     {
       "id": "plant-acer-pseudo-platanus",
@@ -322,8 +361,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Berg-Ahorn",
       "family": "Sapindaceae",
       "genus": "Acer",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/acer-pseudo-platanus.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 2
     },
     {
       "id": "plant-achillea-millefolium",
@@ -335,8 +377,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Gewöhnliche Wiesen-Schafgarbe",
       "family": "Asteraceae",
       "genus": "Achillea",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/achillea-millefolium.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 2
     },
     {
       "id": "plant-aegopodium-podagraria",
@@ -348,8 +393,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Giersch",
       "family": "Apiaceae",
       "genus": "Aegopodium",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/aegopodium-podagraria.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 3
     },
     {
       "id": "plant-ajuga-reptans",
@@ -361,8 +409,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Kriechender Günsel",
       "family": "Lamiaceae",
       "genus": "Ajuga",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/ajuga-reptans.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 3
     },
     {
       "id": "plant-alnus-glutinosa",
@@ -374,8 +425,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Schwarz-Erle",
       "family": "Betulaceae",
       "genus": "Alnus",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/alnus-glutinosa.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 4
     },
     {
       "id": "plant-anthriscus-sylvestris",
@@ -387,8 +441,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Wiesen-Kerbel",
       "family": "Apiaceae",
       "genus": "Anthriscus",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/anthriscus-sylvestris.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 4
     },
     {
       "id": "plant-anthyllis-vulneraria",
@@ -400,8 +457,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Echter Wundklee",
       "family": "Fabaceae",
       "genus": "Anthyllis",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/anthyllis-vulneraria.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 5
     },
     {
       "id": "plant-arrhenatherum-elatius",
@@ -413,8 +473,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Gewöhnlicher Glatthafer",
       "family": "Poaceae",
       "genus": "Arrhenatherum",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/arrhenatherum-elatius.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 5
     },
     {
       "id": "plant-asarum-europaeum",
@@ -426,8 +489,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Gewöhnliche Haselwurz",
       "family": "Aristolochiaceae",
       "genus": "Asarum",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/asarum-europaeum.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 6
     },
     {
       "id": "plant-asplenium-ruta-muraria",
@@ -439,8 +505,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Mauerraute",
       "family": "Aspleniaceae",
       "genus": "Asplenium",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/asplenium-ruta-muraria.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 6
     },
     {
       "id": "plant-athyrium-filix-femina",
@@ -452,8 +521,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Wald-Frauenfarn",
       "family": "Athyriaceae",
       "genus": "Athyrium",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/athyrium-filix-femina.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 7
     },
     {
       "id": "plant-avena-sativa",
@@ -465,8 +537,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Saat-Hafer",
       "family": "Poaceae",
       "genus": "Avena",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/avena-sativa.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 7
     },
     {
       "id": "plant-bellis-perennis",
@@ -478,8 +553,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Gänseblümchen",
       "family": "Asteraceae",
       "genus": "Bellis",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/bellis-perennis.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 8
     },
     {
       "id": "plant-betula-pendula",
@@ -491,8 +569,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Hänge-Birke",
       "family": "Betulaceae",
       "genus": "Betula",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/betula-pendula.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 8
     },
     {
       "id": "plant-bromus-erectus",
@@ -504,8 +585,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Aufrechte Trespe",
       "family": "Poaceae",
       "genus": "Bromus",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/bromus-erectus.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 9
     },
     {
       "id": "plant-capsella-bursa-pastoris",
@@ -517,8 +601,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Gewöhnliches Hirtentäschel",
       "family": "Brassicaceae",
       "genus": "Capsella",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/capsella-bursa-pastoris.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 9
     },
     {
       "id": "plant-carex-flacca",
@@ -530,8 +617,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Blaugrüne Segge",
       "family": "Cyperaceae",
       "genus": "Carex",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/carex-flacca.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 10
     },
     {
       "id": "plant-carex-sylvatica",
@@ -543,8 +633,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Wald-Segge",
       "family": "Cyperaceae",
       "genus": "Carex",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/carex-sylvatica.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 10
     },
     {
       "id": "plant-carpinus-betulus",
@@ -556,8 +649,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Gemeine Hainbuche",
       "family": "Betulaceae",
       "genus": "Carpinus",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/carpinus-betulus.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 11
     },
     {
       "id": "plant-carum-carvi",
@@ -569,8 +665,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Wiesen-Kümmel",
       "family": "Apiaceae",
       "genus": "Carum",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/carum-carvi.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 11
     },
     {
       "id": "plant-centaurea-jacea",
@@ -582,8 +681,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Wiesen-Flockenblume",
       "family": "Asteraceae",
       "genus": "Centaurea",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/centaurea-jacea.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 12
     },
     {
       "id": "plant-cerastium-arvense",
@@ -595,8 +697,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Acker-Hornkraut",
       "family": "Caryophyllaceae",
       "genus": "Cerastium",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/cerastium-arvense.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 12
     },
     {
       "id": "plant-chelidonium-majus",
@@ -608,8 +713,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Schöllkraut",
       "family": "Papaveraceae",
       "genus": "Chelidonium",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/chelidonium-majus.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 12
     },
     {
       "id": "plant-cichorium-intybus",
@@ -621,8 +729,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Gemeine Wegwarte",
       "family": "Asteraceae",
       "genus": "Cichorium",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/cichorium-intybus.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 13
     },
     {
       "id": "plant-cirsium-arvense",
@@ -634,8 +745,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Acker-Kratzdistel",
       "family": "Asteraceae",
       "genus": "Cirsium",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/cirsium-arvense.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 13
     },
     {
       "id": "plant-cornus-sanguinea",
@@ -647,8 +761,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Blutroter Hartriegel",
       "family": "Cornaceae",
       "genus": "Cornus",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/cornus-sanguinea.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 14
     },
     {
       "id": "plant-corylus-avellana",
@@ -660,8 +777,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Gemeine Hasel",
       "family": "Betulaceae",
       "genus": "Corylus",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/corylus-avellana.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 14
     },
     {
       "id": "plant-crataegus-monogyna",
@@ -673,8 +793,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Eingriffeliger Weißdorn",
       "family": "Rosaceae",
       "genus": "Crataegus",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/crataegus-monogyna.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 15
     },
     {
       "id": "plant-crepis-biennis",
@@ -686,8 +809,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Wiesen-Pippau",
       "family": "Asteraceae",
       "genus": "Crepis",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/crepis-biennis.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 15
     },
     {
       "id": "plant-dactylis-glomerata",
@@ -699,8 +825,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Gewöhnliches Knäuelgras",
       "family": "Poaceae",
       "genus": "Dactylis",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/dactylis-glomerata.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 16
     },
     {
       "id": "plant-dryopteris-filix-mas",
@@ -712,8 +841,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Echter Wurmfarn",
       "family": "Dryopteridaceae",
       "genus": "Dryopteris",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/dryopteris-filix-mas.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 16
     },
     {
       "id": "plant-echium-vulgare",
@@ -725,8 +857,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Gewöhnliche Natternkopf",
       "family": "Boraginaceae",
       "genus": "Echium",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/echium-vulgare.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 17
     },
     {
       "id": "plant-elymus-repens",
@@ -738,8 +873,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Gewöhnliche Quecke",
       "family": "Poaceae",
       "genus": "Elymus",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/elymus-repens.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 17
     },
     {
       "id": "plant-equisetum-arvense",
@@ -751,8 +889,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Acker-Schachtelhalm",
       "family": "Equisetaceae",
       "genus": "Equisetum",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/equisetum-arvense.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 18
     },
     {
       "id": "plant-euonymus-europaeus",
@@ -764,8 +905,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Gewöhnlicher Spindelstrauch / Pfaffenkäppchen",
       "family": "Celastraceae",
       "genus": "Euonymus",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/euonymus-europaeus.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 19
     },
     {
       "id": "plant-euphorbia-cyparissias",
@@ -777,8 +921,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Zypressen-Wolfsmilch",
       "family": "Euphorbiaceae",
       "genus": "Euphorbia",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/euphorbia-cyparissias.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 20
     },
     {
       "id": "plant-fagus-sylvatica",
@@ -790,8 +937,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Rotbuche",
       "family": "Fagaceae",
       "genus": "Fagus",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/fagus-sylvatica.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 20
     },
     {
       "id": "plant-fragaria-vesca",
@@ -803,8 +953,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Wald-Erdbeere",
       "family": "Rosaceae",
       "genus": "Fragaria",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/fragaria-vesca.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 21
     },
     {
       "id": "plant-fraxinus-excelsior",
@@ -816,8 +969,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Gemeine Esche",
       "family": "Oleaceae",
       "genus": "Fraxinus",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/fraxinus-excelsior.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 22
     },
     {
       "id": "plant-galium-mollugo",
@@ -829,8 +985,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Wiesen-Labkraut",
       "family": "Rubiaceae",
       "genus": "Galium",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/galium-mollugo.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 23
     },
     {
       "id": "plant-geranium-sanguineum",
@@ -842,8 +1001,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Blutroter Storchschnabel",
       "family": "Geraniaceae",
       "genus": "Geranium",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/geranium-sanguineum.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 24
     },
     {
       "id": "plant-glechoma-hederacea",
@@ -855,8 +1017,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Gundermann",
       "family": "Lamiaceae",
       "genus": "Glechoma",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/glechoma-hederacea.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 25
     },
     {
       "id": "plant-hieracium-murorum",
@@ -868,8 +1033,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Wald-Habichtskraut",
       "family": "Asteraceae",
       "genus": "Hieracium",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/hieracium-murorum.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 26
     },
     {
       "id": "plant-hippocrepis-comosa",
@@ -881,8 +1049,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Gewöhnlicher Hufeisenklee",
       "family": "Fabaceae",
       "genus": "Hippocrepis",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/hippocrepis-comosa.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 26
     },
     {
       "id": "plant-hordeum-distichon",
@@ -894,8 +1065,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Zweizeilige Gerste",
       "family": "Poaceae",
       "genus": "Hordeum",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/hordeum-distichon.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 27
     },
     {
       "id": "plant-juncus-effusus",
@@ -907,8 +1081,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Flatter-Binse",
       "family": "Juncaceae",
       "genus": "Juncus",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/juncus-effusus.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 27
     },
     {
       "id": "plant-lamium-album",
@@ -920,8 +1097,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Weiße Taubnessel",
       "family": "Lamiaceae",
       "genus": "Lamium",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/lamium-album.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 28
     },
     {
       "id": "plant-lathyrus-pratensis",
@@ -933,8 +1113,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Wiesen-Platterbse",
       "family": "Fabaceae",
       "genus": "Lathyrus",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/lathyrus-pratensis.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 28
     },
     {
       "id": "plant-ligustrum-vulgare",
@@ -946,8 +1129,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Gewöhnlicher Liguster",
       "family": "Oleaceae",
       "genus": "Ligustrum",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/ligustrum-vulgare.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 29
     },
     {
       "id": "plant-lolium-perenne",
@@ -959,8 +1145,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Deutsches Weidelgras",
       "family": "Poaceae",
       "genus": "Lolium",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/lolium-perenne.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 29
     },
     {
       "id": "plant-lonicera-xylosteum",
@@ -972,8 +1161,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Rote Heckenkirsche",
       "family": "Caprifoliaceae",
       "genus": "Lonicera",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/lonicera-xylosteum.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 30
     },
     {
       "id": "plant-lotus-corniculatus",
@@ -985,8 +1177,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Gewöhnlicher Hornklee",
       "family": "Fabaceae",
       "genus": "Lotus",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/lotus-corniculatus.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 31
     },
     {
       "id": "plant-luzula-luzuloides",
@@ -998,8 +1193,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Weißliche / Gewöhnliche Hainsimse",
       "family": "Juncaceae",
       "genus": "Luzula",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/luzula-luzuloides.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 32
     },
     {
       "id": "plant-lychnis-flos-cuculi",
@@ -1011,8 +1209,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Kuckucks-Lichtnelke",
       "family": "Caryophyllaceae",
       "genus": "Lychnis",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/lychnis-flos-cuculi.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 33
     },
     {
       "id": "plant-matricaria-chamomilla",
@@ -1024,8 +1225,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Echte Kamille",
       "family": "Asteraceae",
       "genus": "Matricaria",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/matricaria-chamomilla.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 34
     },
     {
       "id": "plant-medicago-lupulina",
@@ -1037,8 +1241,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Hopfenklee",
       "family": "Fabaceae",
       "genus": "Medicago",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/medicago-lupulina.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 34
     },
     {
       "id": "plant-oxalis-acetosella",
@@ -1050,8 +1257,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Sauerklee",
       "family": "Oxalidaceae",
       "genus": "Oxalis",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/oxalis-acetosella.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 35
     },
     {
       "id": "plant-papaver-rhoeas",
@@ -1063,8 +1273,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Klatschmohn",
       "family": "Papaveraceae",
       "genus": "Papaver",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/papaver-rhoeas.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 35
     },
     {
       "id": "plant-phleum-pratense",
@@ -1076,8 +1289,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Wiesen-Lieschgras",
       "family": "Poaceae",
       "genus": "Phleum",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/phleum-pratense.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 36
     },
     {
       "id": "plant-picea-abies",
@@ -1089,8 +1305,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Gewöhnliche Fichte",
       "family": "Pinaceae",
       "genus": "Picea",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/picea-abies.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 37
     },
     {
       "id": "plant-pinus-sylvestris",
@@ -1102,8 +1321,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Wald-Kiefer",
       "family": "Pinaceae",
       "genus": "Pinus",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/pinus-sylvestris.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 38
     },
     {
       "id": "plant-plantago-lanceolata",
@@ -1115,8 +1337,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Spitz-Wegerich",
       "family": "Plantaginaceae",
       "genus": "Plantago",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/plantago-lanceolata.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 39
     },
     {
       "id": "plant-plantago-major",
@@ -1128,8 +1353,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Breit-Wegerich",
       "family": "Plantaginaceae",
       "genus": "Plantago",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/plantago-major.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 40
     },
     {
       "id": "plant-poa-annua",
@@ -1141,8 +1369,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Einjähriges Rispengras",
       "family": "Poaceae",
       "genus": "Poa",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/poa-annua.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 41
     },
     {
       "id": "plant-poa-pratensis",
@@ -1154,8 +1385,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Wiesen-Rispengras",
       "family": "Poaceae",
       "genus": "Poa",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/poa-pratensis.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 42
     },
     {
       "id": "plant-polygonum-aviculare",
@@ -1167,8 +1401,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Echter Vogelknöterich",
       "family": "Polygonaceae",
       "genus": "Polygonum",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/polygonum-aviculare.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 42
     },
     {
       "id": "plant-populus-tremula",
@@ -1180,8 +1417,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Zitterpappel",
       "family": "Salicaceae",
       "genus": "Populus",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/populus-tremula.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 43
     },
     {
       "id": "plant-potentilla-anserina",
@@ -1193,8 +1433,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Gänsefingerkraut",
       "family": "Rosaceae",
       "genus": "Potentilla",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/potentilla-anserina.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 44
     },
     {
       "id": "plant-prunus-spinosa",
@@ -1206,8 +1449,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Schlehe",
       "family": "Rosaceae",
       "genus": "Prunus",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/prunus-spinosa.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 45
     },
     {
       "id": "plant-pteridium-aquilinum",
@@ -1219,8 +1465,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Adlerfarn",
       "family": "Dennstaedtiaceae",
       "genus": "Pteridium",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/pteridium-aquilinum.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 46
     },
     {
       "id": "plant-quercus-robur",
@@ -1232,8 +1481,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Stiel-Eiche",
       "family": "Fagaceae",
       "genus": "Quercus",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/quercus-robur.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 47
     },
     {
       "id": "plant-ranunculus-acris",
@@ -1245,8 +1497,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Scharfer Hahnenfuß",
       "family": "Ranunculaceae",
       "genus": "Ranunculus",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/ranunculus-acris.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 48
     },
     {
       "id": "plant-ranunculus-repens",
@@ -1258,8 +1513,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Kriechender Hahnenfuß",
       "family": "Ranunculaceae",
       "genus": "Ranunculus",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/ranunculus-repens.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 49
     },
     {
       "id": "plant-rubus-idaeus",
@@ -1271,8 +1529,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Himbeere",
       "family": "Rosaceae",
       "genus": "Rubus",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/rubus-idaeus.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 49
     },
     {
       "id": "plant-rumex-acetosa",
@@ -1284,8 +1545,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Großer Sauerampfer",
       "family": "Polygonaceae",
       "genus": "Rumex",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/rumex-acetosa.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 50
     },
     {
       "id": "plant-salix-caprea",
@@ -1297,8 +1561,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Sal-Weide",
       "family": "Salicaceae",
       "genus": "Salix",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/salix-caprea.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 51
     },
     {
       "id": "plant-salvia-pratensis",
@@ -1310,8 +1577,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Wiesen-Salbei",
       "family": "Lamiaceae",
       "genus": "Salvia",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/salvia-pratensis.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 52
     },
     {
       "id": "plant-sambucus-nigra",
@@ -1323,8 +1593,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Schwarzer Holunder",
       "family": "Adoxaceae",
       "genus": "Sambucus",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/sambucus-nigra.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 52
     },
     {
       "id": "plant-sanguisorba-minor",
@@ -1336,8 +1609,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Kleiner Wiesenknopf",
       "family": "Rosaceae",
       "genus": "Sanguisorba",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/sanguisorba-minor.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 53
     },
     {
       "id": "plant-secale-cereale",
@@ -1349,8 +1625,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Saat-Roggen",
       "family": "Poaceae",
       "genus": "Secale",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/secale-cereale.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 54
     },
     {
       "id": "plant-securigera-varia",
@@ -1362,8 +1641,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Bunte Kronwicke",
       "family": "Fabaceae",
       "genus": "Securigera",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/securigera-varia.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 55
     },
     {
       "id": "plant-silene-dioica",
@@ -1375,8 +1657,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Rote Lichtnelke",
       "family": "Caryophyllaceae",
       "genus": "Silene",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/silene-dioica.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 56
     },
     {
       "id": "plant-sinapis-arvensis",
@@ -1388,8 +1673,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Acker-Senf",
       "family": "Brassicaceae",
       "genus": "Sinapis",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/sinapis-arvensis.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 56
     },
     {
       "id": "plant-sorbus-aucuparia",
@@ -1401,8 +1689,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Vogelbeere",
       "family": "Rosaceae",
       "genus": "Sorbus",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/sorbus-aucuparia.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 57
     },
     {
       "id": "plant-stachys-sylvatica",
@@ -1414,8 +1705,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Wald-Ziest",
       "family": "Lamiaceae",
       "genus": "Stachys",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/stachys-sylvatica.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 58
     },
     {
       "id": "plant-stellaria-media",
@@ -1427,8 +1721,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Vogel-Sternmiere / Gewöhnliche Vogelmiere",
       "family": "Caryophyllaceae",
       "genus": "Stellaria",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/stellaria-media.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 59
     },
     {
       "id": "plant-symphytum-officinale",
@@ -1440,8 +1737,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Echter Beinwell",
       "family": "Boraginaceae",
       "genus": "Symphytum",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/symphytum-officinale.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 59
     },
     {
       "id": "plant-thymus-praecox",
@@ -1453,8 +1753,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Frühblühender Thymian",
       "family": "Lamiaceae",
       "genus": "Thymus",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/thymus-praecox.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 59
     },
     {
       "id": "plant-tilia-cordata",
@@ -1466,8 +1769,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Winter-Linde",
       "family": "Malvaceae",
       "genus": "Tilia",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/tilia-cordata.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 60
     },
     {
       "id": "plant-trifolium-pratense",
@@ -1479,8 +1785,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Wiesenklee",
       "family": "Fabaceae",
       "genus": "Trifolium",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/trifolium-pratense.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 60
     },
     {
       "id": "plant-trifolium-repens",
@@ -1492,8 +1801,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Weiß-Klee",
       "family": "Fabaceae",
       "genus": "Trifolium",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/trifolium-repens.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 61
     },
     {
       "id": "plant-triticum-aestivum",
@@ -1505,8 +1817,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Saat-Weizen",
       "family": "Poaceae",
       "genus": "Triticum",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/triticum-aestivum.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 61
     },
     {
       "id": "plant-ulmus-glabra",
@@ -1518,8 +1833,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Berg-Ulme",
       "family": "Ulmaceae",
       "genus": "Ulmus",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/ulmus-glabra.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 62
     },
     {
       "id": "plant-urtica-dioica",
@@ -1531,8 +1849,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Große Brennnessel",
       "family": "Urticaceae",
       "genus": "Urtica",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/urtica-dioica.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 63
     },
     {
       "id": "plant-vaccinium-myrtillus",
@@ -1544,8 +1865,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Blaubeere / Heidelbeere",
       "family": "Ericaceae",
       "genus": "Vaccinium",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/vaccinium-myrtillus.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 64
     },
     {
       "id": "plant-veronica-chamaedrys",
@@ -1557,8 +1881,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Gamander-Ehrenpreis",
       "family": "Plantaginaceae",
       "genus": "Veronica",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/veronica-chamaedrys.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 65
     },
     {
       "id": "plant-viburnum-lantana",
@@ -1570,8 +1897,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Wolliger Schneeball",
       "family": "Adoxaceae",
       "genus": "Viburnum",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/viburnum-lantana.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 65
     },
     {
       "id": "plant-vicia-sepium",
@@ -1583,8 +1913,11 @@ window.LEARNING_ARCHIVE_DATA = {
       "germanName": "Zaun-Wicke",
       "family": "Fabaceae",
       "genus": "Vicia",
-      "imageStatus": "source-pdf-private",
-      "traits": []
+      "imageStatus": "included-local-source-pdf",
+      "traits": [],
+      "imagePath": "assets/plants/vicia-sepium.jpg",
+      "imageSource": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+      "imagePage": 66
     }
   ],
   "animals": [
@@ -7064,12 +7397,25 @@ window.LEARNING_ARCHIVE_DATA = {
       "Betulaceae"
     ],
     "Plantaginaceae": [
-      "Lamiaceae",
-      "Rubiaceae"
+      "Scrophulariaceae",
+      "Lamiaceae"
+    ],
+    "Scrophulariaceae": [
+      "Plantaginaceae",
+      "Lamiaceae"
+    ],
+    "Liliaceae": [
+      "Poaceae",
+      "Juncaceae"
     ],
     "Ranunculaceae": [
       "Rosaceae",
       "Papaveraceae"
     ]
+  },
+  "imageTraining": {
+    "enabled": true,
+    "source": "Formenkenntnis_Pflanzen_Listen_Gesamt.pdf",
+    "note": "Pflanzenbilder sind aus der hochgeladenen Pflanzenliste extrahiert und für privaten Lerngebrauch im Projekt eingebunden."
   }
 };

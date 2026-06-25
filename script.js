@@ -4,15 +4,16 @@
   const $ = (selector) => document.querySelector(selector);
 
   const modes = [
+    { id: "plantImages", label: "Pflanzen-Bildtrainer", target: "plants", question: "imagePlant", text: "Bild → Art/Familie/Merkmale." },
     { id: "plants", label: "Pflanzen", target: "plants", question: "family", text: "100 Pflanzen: Familie, Gattung, Art." },
-    { id: "familyDrill", label: "Familien-Diagnose", target: "plants", question: "familyTraits", text: "Merkmale → passende Pflanzenfamilie." },
+    { id: "familyDrill", label: "Familien-Diagnose", target: "plants", question: "familyTraits", text: "Merkmale → prüfungsrelevante Pflanzenfamilie." },
     { id: "animals", label: "Tiere", target: "animals", question: "family", text: "Tiere: Taxonomie, Familien, Ordnungen." },
     { id: "species", label: "Artnamen", target: "all", question: "species", text: "Deutsch ↔ wissenschaftlich." },
     { id: "traits", label: "Merkmale", target: "all", question: "traits", text: "Merkmale wirklich begründen." }
   ];
 
   const defaultState = {
-    mode: "plants",
+    mode: "plantImages",
     filterGroup: "all",
     selectedCluster: null,
     quiz: null,
@@ -53,6 +54,10 @@
     return base;
   }
 
+  function plantImageItems() {
+    return DATA.plants.filter((item) => item.imagePath);
+  }
+
   function clusterKey(item) {
     if (item.group === "plants") return `plants:${item.family || "Unbekannt"}`;
     return `animals:${item.order || item.family || item.className || "Unbekannt"}`;
@@ -75,7 +80,15 @@
   }
 
   function plantFamilies() {
+    const focusFamilies = Array.isArray(DATA.examPlantFamilies) ? DATA.examPlantFamilies : [];
+    if (focusFamilies.length) {
+      return focusFamilies.filter((family) => DATA.familyHints?.[family]?.length).sort();
+    }
     return [...new Set(DATA.plants.map((item) => item.family).filter(Boolean))].sort();
+  }
+
+  function familyLabel(family) {
+    return DATA.familyDisplayNames?.[family] || family;
   }
 
   function familyItems(family) {
@@ -89,6 +102,11 @@
   function familyPercent(family) {
     const fm = familyMastery(family);
     return Math.round(((fm.level || 0) / 5) * 100);
+  }
+
+  function optionLabel(option, field = "") {
+    if (field === "family" || field === "familyProfile") return familyLabel(option);
+    return option;
   }
 
   function itemName(item) {
@@ -164,6 +182,7 @@
         </div>
         <div class="controls">
           <button class="primary-button" type="button" data-action="new-quiz">Neue Frage</button>
+          <button class="ghost-button" type="button" data-action="start-image-trainer">Pflanzen-Bildtrainer</button>
           <button class="ghost-button" type="button" data-action="focus-weak">Schwächstes Thema</button>
           <button class="ghost-button" type="button" data-action="start-family-drill">Familien-Diagnose</button>
         </div>
@@ -237,6 +256,7 @@
     const plantPerDay = Math.max(1, Math.ceil(plantOpen / Math.max(1, daysUntil(plantsExam.date))));
     const animalPerDay = Math.max(1, Math.ceil(animalOpen / Math.max(1, daysUntil(animalsExam.date))));
     const quests = [
+      { title: `Pflanzen-Bildtraining`, text: `Bild sehen → Art oder Familie bestimmen. Das ist jetzt Pflichtmodus für die Pflanzenklausur.` , mode: "plantImages"},
       { title: `Pflanzen: ${plantPerDay} neue/stabile Einträge`, text: `${plantOpen} Pflanzen unter 80%. Familien zuerst.` , mode: "plants"},
       { title: `Tiere: ${animalPerDay} neue/stabile Einträge`, text: `${animalOpen} Tiere unter 80%. Ordnung/Familie zuerst.` , mode: "animals"},
       { title: "Familien-Diagnose", text: "Merkmale sehen → Familie nennen. Perfekt gegen reines Arten-Auswendiglernen.", mode: "familyDrill"},
@@ -255,6 +275,10 @@
     const mode = currentMode();
     if (mode.question === "familyTraits") {
       makeFamilyQuiz();
+      return;
+    }
+    if (mode.question === "imagePlant") {
+      makePlantImageQuiz(forcedItem);
       return;
     }
     const pool = relevantItems().filter((item) => item.family || item.germanName || item.scientificName || item.displayName);
@@ -286,6 +310,33 @@
 
     const options = buildOptions(answer, field, item);
     state.quiz = { itemId: item.id, prompt, answer, options, field, checked: false, selected: null };
+    saveState();
+    render();
+  }
+
+
+  function makePlantImageQuiz(forcedItem = null) {
+    const pool = plantImageItems();
+    const item = forcedItem?.imagePath ? forcedItem : weightedPick(pool.length ? pool : DATA.plants);
+    const askSpecies = Math.random() < 0.55;
+    const field = askSpecies ? "imageSpecies" : "imageFamily";
+    const answer = askSpecies ? itemName(item) : (item.family || "Unbekannt");
+    const prompt = askSpecies
+      ? "Welche Pflanzenart ist auf dem Bild?"
+      : "Zu welcher Familie gehört die Pflanze auf dem Bild?";
+    const options = buildOptions(answer, field, item);
+    state.quiz = {
+      isImageQuiz: true,
+      itemId: item.id,
+      prompt,
+      answer,
+      options,
+      field,
+      checked: false,
+      selected: null,
+      imagePath: item.imagePath,
+      imagePromptKind: askSpecies ? "Art" : "Familie"
+    };
     saveState();
     render();
   }
@@ -342,8 +393,10 @@
       } else {
         candidates = [...new Set(relevantItems().map((x) => x.family || x.familyGerman || x.order || x.className).filter(Boolean))];
       }
-    } else if (field === "species") {
-      candidates = [...new Set(items().map((x) => x.germanName).filter(Boolean))];
+    } else if (field === "imageFamily") {
+      candidates = [...new Set(DATA.plants.map((x) => x.family).filter(Boolean))];
+    } else if (field === "species" || field === "imageSpecies") {
+      candidates = [...new Set((field === "imageSpecies" ? DATA.plants : items()).map((x) => x.germanName).filter(Boolean))];
     } else {
       candidates = [...new Set([...(DATA.familyHints[item.family] || []), "Fundort + Blüte/Blatt vergleichen", "Verwechslungspartner nennen", "Familie anhand Schlüsselmerkmal prüfen"])];
     }
@@ -382,9 +435,25 @@
       m.attempts = (m.attempts || 0) + 1;
       if (correct) {
         m.correct = (m.correct || 0) + 1;
-        m[state.quiz.field] = Math.min(3, (m[state.quiz.field] || 0) + 1);
+        if (state.quiz.field === "imageFamily") {
+          m.family = Math.min(3, (m.family || 0) + 1);
+          m.recognition = Math.min(3, (m.recognition || 0) + 1);
+        } else if (state.quiz.field === "imageSpecies") {
+          m.species = Math.min(3, (m.species || 0) + 1);
+          m.recognition = Math.min(3, (m.recognition || 0) + 1);
+        } else {
+          m[state.quiz.field] = Math.min(3, (m[state.quiz.field] || 0) + 1);
+        }
       } else {
-        m[state.quiz.field] = Math.max(0, (m[state.quiz.field] || 0) - 1);
+        if (state.quiz.field === "imageFamily") {
+          m.family = Math.max(0, (m.family || 0) - 1);
+          m.recognition = Math.max(0, (m.recognition || 0) - 1);
+        } else if (state.quiz.field === "imageSpecies") {
+          m.species = Math.max(0, (m.species || 0) - 1);
+          m.recognition = Math.max(0, (m.recognition || 0) - 1);
+        } else {
+          m[state.quiz.field] = Math.max(0, (m[state.quiz.field] || 0) - 1);
+        }
       }
       state.mastery[item.id] = m;
     }
@@ -409,11 +478,13 @@
       ? (item ? itemName(item) : "Keine Auswahl")
       : revealDetails && item
         ? itemName(item)
-        : quiz.field === "species"
-          ? "Artnamen-Quiz"
-          : quiz.field === "family"
-            ? "Familienfrage"
-            : "Merkmalsfrage";
+        : quiz.isImageQuiz
+          ? "Pflanzen-Bildfrage"
+          : quiz.field === "species"
+            ? "Artnamen-Quiz"
+            : quiz.field === "family"
+              ? "Familienfrage"
+              : "Merkmalsfrage";
     const hiddenMeta = item
       ? `<div class="meta-line"><span>${escapeHTML(groupLabel(item))}</span><span>Einordnung nach deiner Antwort</span><span>${masteryPercent(item)}%</span></div>`
       : "";
@@ -430,15 +501,16 @@
       </div>
       <div class="active-layout">
         <div class="quiz-box">
-          <p class="eyebrow">Prüfmodus</p>
+          <p class="eyebrow">Prüfmodus${quiz?.isImageQuiz ? " · Bild" : ""}</p>
+          ${quiz?.imagePath ? `<figure class="plant-image-quiz"><img src="${escapeAttr(quiz.imagePath)}" alt="Pflanzenbild für die Bestimmungsfrage"><figcaption>${quiz.checked && item ? `${escapeHTML(itemName(item))} · ${escapeHTML(scientific(item))}` : "Bild zuerst bestimmen – Lösung bleibt verdeckt."}</figcaption></figure>` : ""}
           <div class="quiz-question">${quiz ? escapeHTML(quiz.prompt) : "Starte eine Quizfrage."}</div>
           ${quiz ? `<div class="answer-grid">${quiz.options.map((opt) => {
             let cls = "";
             if (quiz.checked && opt === quiz.answer) cls = "correct";
             if (quiz.checked && opt === quiz.selected && opt !== quiz.answer) cls = "wrong";
-            return `<button class="answer-button ${cls}" type="button" data-action="answer" data-value="${escapeAttr(opt)}">${escapeHTML(opt)}</button>`;
+            return `<button class="answer-button ${cls}" type="button" data-action="answer" data-value="${escapeAttr(opt)}">${escapeHTML(optionLabel(opt, quiz.field))}</button>`;
           }).join("")}</div>` : ""}
-          ${quiz?.checked ? `<p style="margin-top:12px" class="${quiz.selected === quiz.answer ? "status-ok" : "status-danger"}">${quiz.selected === quiz.answer ? "Richtig. Fortschritt gespeichert." : `Nicht richtig. Erwartet: ${escapeHTML(quiz.answer)}`}</p>` : ""}
+          ${quiz?.checked ? `<p style="margin-top:12px" class="${quiz.selected === quiz.answer ? "status-ok" : "status-danger"}">${quiz.selected === quiz.answer ? "Richtig. Fortschritt gespeichert." : `Nicht richtig. Erwartet: ${escapeHTML(optionLabel(quiz.answer, quiz.field))}`}</p>` : ""}
         </div>
         <div>
           <h3>Einordnung</h3>
@@ -474,18 +546,18 @@
             let cls = "";
             if (quiz.checked && opt === quiz.answer) cls = "correct";
             if (quiz.checked && opt === quiz.selected && opt !== quiz.answer) cls = "wrong";
-            return `<button class="answer-button ${cls}" type="button" data-action="answer" data-value="${escapeAttr(opt)}">${escapeHTML(opt)}</button>`;
+            return `<button class="answer-button ${cls}" type="button" data-action="answer" data-value="${escapeAttr(opt)}">${escapeHTML(optionLabel(opt, quiz.field))}</button>`;
           }).join("")}</div>
-          ${quiz.checked ? `<p style="margin-top:12px" class="${quiz.selected === quiz.answer ? "status-ok" : "status-danger"}">${quiz.selected === quiz.answer ? "Richtig. Familienverständnis gespeichert." : `Nicht richtig. Erwartet: ${escapeHTML(quiz.answer)}`}</p>` : ""}
+          ${quiz.checked ? `<p style="margin-top:12px" class="${quiz.selected === quiz.answer ? "status-ok" : "status-danger"}">${quiz.selected === quiz.answer ? "Richtig. Familienverständnis gespeichert." : `Nicht richtig. Erwartet: ${escapeHTML(optionLabel(quiz.answer, quiz.field))}`}</p>` : ""}
         </div>
         <div>
-          ${revealDetails ? `<h3>${escapeHTML(quiz.family)}</h3>
+          ${revealDetails ? `<h3>${escapeHTML(familyLabel(quiz.family))}</h3>
           <div class="meta-line"><span>${familyItems(quiz.family).length} Pflanzen in deiner Liste</span><span>${familyPercent(quiz.family)}% Familiensicherheit</span></div>
           <h3 style="margin-top:14px">Diagnosemerkmale</h3>
           ${quiz.traits.map((h) => `<label class="checkline"><input type="checkbox"> ${escapeHTML(h)}</label>`).join("")}
           <h3 style="margin-top:14px">Beispiele aus deiner Liste</h3>
           <p class="muted">${quiz.examples.map(escapeHTML).join(" · ") || "Keine Beispiele gefunden."}</p>
-          ${contrasts.length ? `<h3 style="margin-top:14px">Nicht verwechseln mit</h3><div class="contrast-list">${contrasts.map((family) => `<details class="contrast-card"><summary>${escapeHTML(family)}</summary><p>${(DATA.familyHints[family] || []).map(escapeHTML).join(" · ")}</p></details>`).join("")}</div>` : ""}
+          ${contrasts.length ? `<h3 style="margin-top:14px">Nicht verwechseln mit</h3><div class="contrast-list">${contrasts.map((family) => `<details class="contrast-card"><summary>${escapeHTML(familyLabel(family))}</summary><p>${(DATA.familyHints[family] || []).map(escapeHTML).join(" · ")}</p></details>`).join("")}</div>` : ""}
           <textarea id="proofInput" placeholder="Familienbeweis: Warum ist das diese Familie? Welches Merkmal wäre am sichersten? Womit würdest du sie verwechseln?"></textarea>
           <div class="controls"><button class="primary-button" type="button" data-action="save-family-proof">Familienbeweis speichern</button></div>` : `<h3>Diagnose nach Antwort</h3>
           <p class="muted">Die Familienantwort, Beispiele und Verwechslungen werden erst nach deiner Auswahl angezeigt. So bleibt die Übung wirklich prüfend.</p>
@@ -505,7 +577,7 @@
       input?.focus();
       return;
     }
-    state.proofs.unshift({ id: crypto.randomUUID ? crypto.randomUUID() : `proof-${Date.now()}`, itemId: `family-${quiz.family}`, itemName: `Familie ${quiz.family}`, text, createdAt: new Date().toISOString() });
+    state.proofs.unshift({ id: crypto.randomUUID ? crypto.randomUUID() : `proof-${Date.now()}`, itemId: `family-${quiz.family}`, itemName: `Familie ${familyLabel(quiz.family)}`, text, createdAt: new Date().toISOString() });
     state.familyMastery = state.familyMastery || {};
     const fm = familyMastery(quiz.family);
     fm.level = Math.min(5, (fm.level || 0) + 1);
@@ -545,12 +617,14 @@
       <div class="active-layout">
         <div>
           <h3>Pflanzenfamilien-Diagnose</h3>
+          <p class="muted">Fokus: nur die klausurrelevanten Familien aus deiner aktuellen Familienliste.</p>
           <div class="family-drill-list">
-            ${plantFamilies().map((family) => `<button class="family-chip" type="button" data-action="train-family" data-id="${escapeAttr(family)}"><strong>${escapeHTML(family)}</strong><span>${familyItems(family).length} Arten · ${familyPercent(family)}%</span></button>`).join("")}
+            ${plantFamilies().map((family) => `<button class="family-chip" type="button" data-action="train-family" data-id="${escapeAttr(family)}"><strong>${escapeHTML(familyLabel(family))}</strong><span>${familyItems(family).length} Arten · ${familyPercent(family)}%</span></button>`).join("")}
           </div>
           <h3 style="margin-top:16px">Einträge im aktuellen Filter</h3>
           <div class="item-list">
             ${current.map((item) => `<article class="item-card">
+              ${item.imagePath ? `<img class="item-thumb" src="${escapeAttr(item.imagePath)}" alt="${escapeAttr(itemName(item))}">` : ""}
               <h3>${escapeHTML(itemName(item))}</h3>
               <div class="meta-line"><span>${escapeHTML(scientific(item))}</span><span>${escapeHTML(item.family || item.order || "")}</span><span>${masteryPercent(item)}%</span></div>
               <div class="progress-bar"><div class="progress-fill" style="width:${masteryPercent(item)}%"></div></div>
@@ -590,6 +664,7 @@
     if (action === "reset-filter") { state.filterGroup = "all"; saveState(); render(); }
     if (action === "new-quiz") makeQuiz();
     if (action === "focus-weak") { const weak = getWeakItems(1)[0]; if (weak) makeQuiz(weak); }
+    if (action === "start-image-trainer") { state.mode = "plantImages"; state.filterGroup = "all"; state.quiz = null; saveState(); makeQuiz(); }
     if (action === "start-family-drill") { state.mode = "familyDrill"; state.filterGroup = "all"; state.quiz = null; saveState(); makeQuiz(); }
     if (action === "train-family") { state.mode = "familyDrill"; state.filterGroup = "plants:" + id; state.quiz = null; makeFamilyQuizFor(id); }
     if (action === "train-item") { const item = items().find((x) => x.id === id); if (item) makeQuiz(item); }
