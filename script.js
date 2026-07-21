@@ -1,6 +1,6 @@
 (() => {
   const DATA = window.LEARNING_ARCHIVE_DATA;
-  const STORAGE_KEY = "ryosLernarchiv.v0.2.formenkenntnis";
+  const STORAGE_KEY = "ryosLernarchiv.v0.2.6.formenkenntnis";
   const $ = (selector) => document.querySelector(selector);
 
   const modes = [
@@ -8,13 +8,15 @@
     { id: "plants", label: "Pflanzen", target: "plants", question: "family", text: "100 Pflanzen: Familie, Gattung, Art." },
     { id: "familyDrill", label: "Familien-Diagnose", target: "plants", question: "familyTraits", text: "Merkmale → prüfungsrelevante Pflanzenfamilie." },
     { id: "animals", label: "Tiere", target: "animals", question: "family", text: "Tiere: Taxonomie, Familien, Ordnungen." },
+    { id: "animalMemory", label: "Tiere-Memory", target: "animals", question: "animalMemory", text: "Bild → Art/Familie/Ordnung/Klasse." },
     { id: "species", label: "Artnamen", target: "all", question: "species", text: "Deutsch ↔ wissenschaftlich." },
     { id: "traits", label: "Merkmale", target: "all", question: "traits", text: "Merkmale wirklich begründen." }
   ];
 
   const defaultState = {
-    mode: "plantImages",
+    mode: "animalMemory",
     filterGroup: "all",
+    onlyRequiredAnimals: true,
     selectedCluster: null,
     quiz: null,
     mastery: {},
@@ -46,8 +48,8 @@
 
   function relevantItems() {
     const mode = currentMode();
-    let base = items();
-    if (mode.target !== "all") base = base.filter((item) => item.group === mode.target);
+    let base = mode.question === "animalMemory" ? animalMemoryItems() : items();
+    if (mode.target !== "all" && mode.question !== "animalMemory") base = base.filter((item) => item.group === mode.target);
     if (state.filterGroup !== "all") {
       base = base.filter((item) => clusterKey(item) === state.filterGroup);
     }
@@ -56,6 +58,50 @@
 
   function plantImageItems() {
     return DATA.plants.filter((item) => item.imagePath);
+  }
+
+
+  function animalMemoryItems() {
+    return DATA.animals.filter((item) => item.imagePath && (item.animalRequired || state.onlyRequiredAnimals === false));
+  }
+
+  function normalizeAnswer(value) {
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[–—-]/g, " ")
+      .replace(/[^a-z0-9äöüß\s]/gi, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function acceptedTaxonAnswers(item, level) {
+    const values = [];
+    if (level === "art") values.push(item.germanName, item.scientificName, item.displayName);
+    if (level === "family") values.push(item.family, item.familyGerman);
+    if (level === "order") values.push(item.order, item.orderGerman);
+    if (level === "class") values.push(item.className, item.classGerman);
+    if (level === "suborder") values.push(item.suborder, item.suborderGerman);
+    return values.filter(Boolean).map(normalizeAnswer);
+  }
+
+  function checkTaxonAnswer(item, level, input) {
+    const answer = normalizeAnswer(input);
+    if (!answer) return false;
+    return acceptedTaxonAnswers(item, level).includes(answer);
+  }
+
+  function animalTreeLine(item) {
+    const rows = [];
+    rows.push(["Stamm", "Chordata", "Chordatiere"]);
+    if (item.subtaxonGroup) rows.push(["Unterstamm", item.subtaxonGroup, "Wirbeltiere"]);
+    if (item.className || item.classGerman) rows.push(["Klasse", item.className, item.classGerman]);
+    if (item.order || item.orderGerman) rows.push(["Ordnung", item.order, item.orderGerman]);
+    if (item.suborder || item.suborderGerman) rows.push(["Unterordnung", item.suborder, item.suborderGerman]);
+    if (item.family || item.familyGerman) rows.push(["Familie", item.family, item.familyGerman]);
+    if (item.scientificName || item.germanName) rows.push(["Art", item.scientificName, item.germanName]);
+    return rows;
   }
 
   function clusterKey(item) {
@@ -185,6 +231,7 @@
           <button class="ghost-button" type="button" data-action="start-image-trainer">Pflanzen-Bildtrainer</button>
           <button class="ghost-button" type="button" data-action="focus-weak">Schwächstes Thema</button>
           <button class="ghost-button" type="button" data-action="start-family-drill">Familien-Diagnose</button>
+          <button class="primary-button" type="button" data-action="start-animal-memory">Tiere-Memory</button>
         </div>
       </div>
     `;
@@ -200,8 +247,7 @@
 
   function clusters() {
     const mode = currentMode();
-    let base = items();
-    if (mode.target !== "all") base = base.filter((item) => item.group === mode.target);
+    let base = relevantItems();
     const map = new Map();
     base.forEach((item) => {
       const key = clusterKey(item);
@@ -258,7 +304,7 @@
     const quests = [
       { title: `Pflanzen-Bildtraining`, text: `Bild sehen → Art oder Familie bestimmen. Das ist jetzt Pflichtmodus für die Pflanzenklausur.` , mode: "plantImages"},
       { title: `Pflanzen: ${plantPerDay} neue/stabile Einträge`, text: `${plantOpen} Pflanzen unter 80%. Familien zuerst.` , mode: "plants"},
-      { title: `Tiere: ${animalPerDay} neue/stabile Einträge`, text: `${animalOpen} Tiere unter 80%. Ordnung/Familie zuerst.` , mode: "animals"},
+      { title: `Tiere-Memory: ${animalPerDay} neue/stabile Einträge`, text: `${animalOpen} Tiere unter 80%. Bild → Art/Familie/Ordnung/Klasse.` , mode: "animalMemory"},
       { title: "Familien-Diagnose", text: "Merkmale sehen → Familie nennen. Perfekt gegen reines Arten-Auswendiglernen.", mode: "familyDrill"},
       { title: "Merkmalsbeweis", text: "Nimm 1 unsicheren Eintrag und schreibe 3 echte Merkmale auf.", mode: "traits"}
     ];
@@ -273,6 +319,10 @@
 
   function makeQuiz(forcedItem = null) {
     const mode = currentMode();
+    if (mode.question === "animalMemory") {
+      makeAnimalMemoryQuiz(forcedItem);
+      return;
+    }
     if (mode.question === "familyTraits") {
       makeFamilyQuiz();
       return;
@@ -314,6 +364,26 @@
     render();
   }
 
+
+
+  function makeAnimalMemoryQuiz(forcedItem = null) {
+    const pool = animalMemoryItems();
+    const item = forcedItem?.imagePath ? forcedItem : weightedPick(pool.length ? pool : DATA.animals.filter((x) => x.group === "animals"));
+    if (!item) return;
+    state.quiz = {
+      isAnimalMemory: true,
+      itemId: item.id,
+      prompt: `Baue den Stammbaum zu diesem Tierbild. Pflicht-Ebene: ${item.requiredLevel || "Art"}.`,
+      answer: item.germanName || item.scientificName || item.displayName,
+      field: "animalMemory",
+      checked: false,
+      revealed: false,
+      selected: null,
+      imagePath: item.imagePath
+    };
+    saveState();
+    render();
+  }
 
   function makePlantImageQuiz(forcedItem = null) {
     const pool = plantImageItems();
@@ -467,6 +537,10 @@
 
   function renderActiveQuest() {
     const quiz = state.quiz;
+    if (quiz?.isAnimalMemory) {
+      renderAnimalMemoryQuest();
+      return;
+    }
     if (quiz?.isFamilyDrill) {
       renderFamilyDrillQuest();
       return;
@@ -524,6 +598,119 @@
         </div>
       </div>
     `;
+  }
+
+
+  function renderAnimalMemoryQuest() {
+    const quiz = state.quiz;
+    const item = quiz ? items().find((x) => x.id === quiz.itemId) : null;
+    if (!item) return;
+    const reveal = quiz.checked || quiz.revealed;
+    const m = mastery(item);
+    const result = quiz.animalResult || null;
+    const rows = animalTreeLine(item);
+    $("#activeQuestPanel").innerHTML = `
+      <div class="section-title-row">
+        <div>
+          <p class="eyebrow">Aktive Quest · Tiere-Memory</p>
+          <h2>${reveal ? escapeHTML(itemName(item)) : "Bild → Stammbaum"}</h2>
+        </div>
+        <button class="primary-button" type="button" data-action="new-quiz">Neues Tier</button>
+      </div>
+      <div class="active-layout">
+        <div class="quiz-box animal-memory-box">
+          <p class="eyebrow">Pflichtmodus${item.animalRequired ? " · rot markiert" : item.requiredUncertain ? " · Pflicht unsicher" : ""}</p>
+          ${item.imagePath ? `<figure class="plant-image-quiz animal-image-quiz"><img src="${escapeAttr(item.imagePath)}" alt="Tierbild"><figcaption>${reveal ? `${escapeHTML(itemName(item))} · ${escapeHTML(scientific(item))}` : "Bild zuerst bestimmen – Lösung bleibt verdeckt."}</figcaption></figure>` : `<div class="empty-state">Kein Bild hinterlegt.</div>`}
+          <div class="quiz-question">${escapeHTML(quiz.prompt)}</div>
+          <div class="animal-answer-grid">
+            <label>Art <input id="animalAnswerArt" type="text" value="${escapeAttr(quiz.answers?.art || "")}" placeholder="deutsch oder lateinisch"></label>
+            <label>Familie <input id="animalAnswerFamily" type="text" value="${escapeAttr(quiz.answers?.family || "")}" placeholder="deutsch oder lateinisch"></label>
+            <label>Ordnung <input id="animalAnswerOrder" type="text" value="${escapeAttr(quiz.answers?.order || "")}" placeholder="deutsch oder lateinisch"></label>
+            <label>Klasse <input id="animalAnswerClass" type="text" value="${escapeAttr(quiz.answers?.class || "")}" placeholder="deutsch oder lateinisch"></label>
+          </div>
+          <div class="controls">
+            <button class="primary-button" type="button" data-action="check-animal-memory">Stammbaum prüfen</button>
+            <button class="ghost-button" type="button" data-action="reveal-animal-memory">Lösung zeigen</button>
+            <button class="ghost-button danger" type="button" data-action="mark-animal-unstable">Instabil markieren</button>
+          </div>
+          ${result ? `<p style="margin-top:12px" class="${result.score >= 3 ? "status-ok" : result.score >= 2 ? "status-warning" : "status-danger"}">${result.score}/4 richtig · ${escapeHTML(result.message)}</p>` : ""}
+        </div>
+        <div>
+          <h3>Stammbaum</h3>
+          <div class="animal-tree-list ${reveal ? "" : "muted"}">
+            ${rows.map(([label, latin, german]) => `<div class="animal-tree-row"><strong>${escapeHTML(label)}</strong><span>${reveal ? `${escapeHTML(latin || "—")} ${german ? `· ${escapeHTML(german)}` : ""}` : "—"}</span></div>`).join("")}
+          </div>
+          <h3 style="margin-top:14px">Merkmals-Check</h3>
+          ${reveal && item.traits?.length ? item.traits.map((t) => `<label class="checkline"><input type="checkbox"> ${escapeHTML(t)}</label>`).join("") : `<p class="muted">Merkmale werden nach Prüfen oder Lösung anzeigen sichtbar.</p>`}
+          ${reveal && item.confusableWith?.length ? `<h3 style="margin-top:14px">Nicht verwechseln mit</h3><p class="muted">${item.confusableWith.map(escapeHTML).join(" · ")}</p>` : ""}
+          ${reveal ? `<textarea id="proofInput" placeholder="Lernbeweis: Woran erkennst du das Tier? Welche Ebene war instabil? Womit verwechselbar?"></textarea>
+          <div class="controls"><button class="primary-button" type="button" data-action="save-proof">Lernbeweis speichern</button></div>` : `<div class="empty-state">Erst prüfen oder Lösung zeigen. Danach erscheinen Merkmale und Lernbeweis.</div>`}
+          <p class="muted" style="margin-top:12px">Status: Art ${m.species || 0}/3 · Familie ${m.family || 0}/3 · Merkmale ${m.traits || 0}/3 · Bild ${m.recognition || 0}/3</p>
+        </div>
+      </div>
+    `;
+  }
+
+  function checkAnimalMemory() {
+    const quiz = state.quiz;
+    const item = quiz ? items().find((x) => x.id === quiz.itemId) : null;
+    if (!quiz?.isAnimalMemory || !item) return;
+    const answers = {
+      art: document.querySelector("#animalAnswerArt")?.value || "",
+      family: document.querySelector("#animalAnswerFamily")?.value || "",
+      order: document.querySelector("#animalAnswerOrder")?.value || "",
+      class: document.querySelector("#animalAnswerClass")?.value || ""
+    };
+    const checks = {
+      art: checkTaxonAnswer(item, "art", answers.art),
+      family: checkTaxonAnswer(item, "family", answers.family),
+      order: checkTaxonAnswer(item, "order", answers.order),
+      class: checkTaxonAnswer(item, "class", answers.class)
+    };
+    const score = Object.values(checks).filter(Boolean).length;
+    const m = mastery(item);
+    m.attempts = (m.attempts || 0) + 1;
+    if (checks.art) m.species = Math.min(3, (m.species || 0) + 1); else m.species = Math.max(0, (m.species || 0) - 1);
+    if (checks.family) m.family = Math.min(3, (m.family || 0) + 1); else m.family = Math.max(0, (m.family || 0) - 1);
+    if (checks.order && checks.class) m.recognition = Math.min(3, (m.recognition || 0) + 1); else m.recognition = Math.max(0, (m.recognition || 0) - 1);
+    if (score >= 3) m.correct = (m.correct || 0) + 1;
+    state.mastery[item.id] = m;
+    state.quiz.checked = true;
+    state.quiz.answers = answers;
+    state.quiz.animalResult = {
+      score,
+      checks,
+      message: score >= 4 ? "Stammbaum stabil." : score >= 2 ? "Teilweise stabil – fehlende Ebene reparieren." : "Instabil – dieses Tier kommt häufiger dran."
+    };
+    saveState();
+    renderActiveQuest();
+    renderHeader();
+    renderMap();
+    renderDangerZones();
+  }
+
+  function revealAnimalMemory() {
+    if (!state.quiz?.isAnimalMemory) return;
+    state.quiz.revealed = true;
+    saveState();
+    renderActiveQuest();
+  }
+
+  function markAnimalUnstable() {
+    const quiz = state.quiz;
+    const item = quiz ? items().find((x) => x.id === quiz.itemId) : null;
+    if (!quiz?.isAnimalMemory || !item) return;
+    const m = mastery(item);
+    m.family = Math.max(0, (m.family || 0) - 1);
+    m.species = Math.max(0, (m.species || 0) - 1);
+    m.recognition = Math.max(0, (m.recognition || 0) - 1);
+    state.mastery[item.id] = m;
+    state.quiz.revealed = true;
+    saveState();
+    renderActiveQuest();
+    renderHeader();
+    renderMap();
+    renderDangerZones();
   }
 
   function renderFamilyDrillQuest() {
@@ -613,6 +800,32 @@
 
   function renderResearchBook() {
     const current = relevantItems().slice(0, 80);
+    if (currentMode().question === "animalMemory") {
+      $("#researchBook").innerHTML = `
+        <div class="active-layout">
+          <div>
+            <h3>Tiere-Memory Pflichtliste</h3>
+            <p class="muted">Fokus: rote Tetrapoda-Pflichtarten aus deinen Screenshots. Bild → Art/Familie/Ordnung/Klasse.</p>
+            <div class="item-list">
+              ${current.map((item) => `<article class="item-card">
+                ${item.imagePath ? `<img class="item-thumb" src="${escapeAttr(item.imagePath)}" alt="${escapeAttr(itemName(item))}">` : ""}
+                <h3>${escapeHTML(itemName(item))}</h3>
+                <div class="meta-line"><span>${escapeHTML(scientific(item))}</span><span>${escapeHTML(item.family || item.order || "")}</span><span>${masteryPercent(item)}%</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width:${masteryPercent(item)}%"></div></div>
+                <button class="ghost-button" type="button" data-action="train-item" data-id="${item.id}">Als Tierbild prüfen</button>
+              </article>`).join("")}
+            </div>
+          </div>
+          <div>
+            <h3>Gespeicherte Lernbeweise</h3>
+            <div class="proof-list">
+              ${state.proofs.length ? state.proofs.slice(0, 10).map((p) => `<article class="proof-card"><h3>${escapeHTML(p.itemName)}</h3><p class="muted">${formatDateTime(p.createdAt)}</p><p>${escapeHTML(p.text)}</p></article>`).join("") : `<div class="empty-state">Noch keine Lernbeweise gespeichert.</div>`}
+            </div>
+          </div>
+        </div>
+      `;
+      return;
+    }
     $("#researchBook").innerHTML = `
       <div class="active-layout">
         <div>
@@ -666,9 +879,13 @@
     if (action === "focus-weak") { const weak = getWeakItems(1)[0]; if (weak) makeQuiz(weak); }
     if (action === "start-image-trainer") { state.mode = "plantImages"; state.filterGroup = "all"; state.quiz = null; saveState(); makeQuiz(); }
     if (action === "start-family-drill") { state.mode = "familyDrill"; state.filterGroup = "all"; state.quiz = null; saveState(); makeQuiz(); }
+    if (action === "start-animal-memory") { state.mode = "animalMemory"; state.filterGroup = "all"; state.quiz = null; saveState(); makeQuiz(); }
     if (action === "train-family") { state.mode = "familyDrill"; state.filterGroup = "plants:" + id; state.quiz = null; makeFamilyQuizFor(id); }
     if (action === "train-item") { const item = items().find((x) => x.id === id); if (item) makeQuiz(item); }
     if (action === "answer") answerQuiz(button.dataset.value);
+    if (action === "check-animal-memory") checkAnimalMemory();
+    if (action === "reveal-animal-memory") revealAnimalMemory();
+    if (action === "mark-animal-unstable") markAnimalUnstable();
     if (action === "save-proof") saveProof();
     if (action === "save-family-proof") saveFamilyProof();
     if (action === "reset-progress") {

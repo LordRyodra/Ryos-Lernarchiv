@@ -164,3 +164,44 @@ select, input { border-radius: 12px; border: 1px solid var(--line); background: 
   border-radius: 16px;
   margin-bottom: 10px;
 }
+
+
+/* v0.2.6 Tiere-Memory */
+.animal-memory-box .quiz-question { margin-top: 12px; }
+.animal-image-quiz img { background: rgba(245, 245, 235, 0.96); }
+.animal-answer-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+.animal-answer-grid label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: .85rem;
+}
+.animal-answer-grid input {
+  width: 100%;
+  color: var(--text);
+}
+.animal-tree-list {
+  display: grid;
+  gap: 8px;
+}
+.animal-tree-row {
+  display: grid;
+  grid-template-columns: 118px minmax(0, 1fr);
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(0,0,0,.16);
+  padding: 9px 10px;
+}
+.animal-tree-row strong { color: var(--accent); }
+.animal-tree-row span { color: var(--text); }
+
+@media (max-width: 720px) {
+  .animal-answer-grid { grid-template-columns: 1fr; }
+  .animal-tree-row { grid-template-columns: 1fr; }
+}
